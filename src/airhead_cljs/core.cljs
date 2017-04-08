@@ -1,17 +1,33 @@
 (ns airhead-cljs.core
-    (:require [reagent.core :as reagent]))
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [reagent.core :as r]))
+
+(def state (r/atom {:server "http://localhost:8080"}))
+
+
+(defn change-server! [event]
+  (swap! state
+         assoc :server
+         (-> event .-target .-value)))
 
 ;; -------------------------
 ;; Views
 
+(defn server-form []
+  [:div
+   [:input {:type "text"
+            :value (:server @state)
+            :on-change change-server!}]])
+
 (defn home-page []
-  [:div [:h2 "Welcome to Reagent"]])
+  [:div [:h1 "Airhead"]
+   [server-form]])
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-root []
-  (reagent/render [home-page] (.getElementById js/document "app")))
+  (r/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
   (mount-root))
