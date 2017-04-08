@@ -3,13 +3,11 @@
   (:require [reagent.core :as r]
             [ajax.core :refer [GET POST]]))
 
-(def state (r/atom {:server "http://localhost:8080"}))
+(def state (r/atom {:server "http://localhost:8080"
+                    :playlist []}))
 
-
-(defn change-server! [event]
-  (swap! state
-         assoc :server
-         (-> event .-target .-value)))
+(defn update-state! [k value]
+  (swap! state assoc k value))
 
 ;; -------------------------
 ;; Views
@@ -17,19 +15,18 @@
 (defn server-form []
   [:div
    [:input {:type "text"
-            :value (:server @state)
-            :on-change change-server!}]])
+            :value (@state :server)
+            :on-change #(update-state! :server
+                                       (-> % .-target .-value))}]])
 
 (defn playlist-div []
-  (let [playlist (r/atom [])
-        handler #(reset! playlist (% "items"))]
-    (GET "http://localhost:8080/api/queue"
-         {:handler handler
-          :response-format :json})
-    (fn []
-      [:div [:h2 "Playlist"]
-       [:ul (for [track @playlist]
-              [:li (track "title")])]])))
+  (GET "http://localhost:8080/api/queue"
+       {:handler #(update-state! :playlist (% "items"))
+        :response-format :json})
+  (fn []
+    [:div [:h2 "Playlist"]
+     [:ul (for [track (@state :playlist)]
+            [:li (track "title")])]]))
 
 (defn home-page []
   [:div [:h1 "Airhead"]
