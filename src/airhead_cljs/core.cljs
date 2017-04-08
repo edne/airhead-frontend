@@ -9,24 +9,26 @@
 (defn update-state! [k value]
   (swap! state assoc k value))
 
+(defn get-playlist []
+  (GET "http://localhost:8080/api/queue"
+       {:handler #(update-state! :playlist (% "items"))
+        :response-format :json}))
+
 ;; -------------------------
 ;; Views
 
 (defn server-form []
-  [:div
+  [:form
    [:input {:type "text"
             :value (@state :server)
             :on-change #(update-state! :server
                                        (-> % .-target .-value))}]])
 
 (defn playlist-div []
-  (GET "http://localhost:8080/api/queue"
-       {:handler #(update-state! :playlist (% "items"))
-        :response-format :json})
-  (fn []
-    [:div [:h2 "Playlist"]
-     [:ul (for [track (@state :playlist)]
-            [:li (track "title")])]]))
+  (js/setTimeout get-playlist 1000)
+  [:div [:h2 "Playlist"]
+   [:ul (for [track (@state :playlist)]
+          [:li (track "title")])]])
 
 (defn home-page []
   [:div [:h1 "Airhead"]
