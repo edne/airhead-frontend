@@ -5,7 +5,8 @@
 
 (def state (r/atom {:server "http://localhost:8080"
                     :playlist []
-                    :tracks []}))
+                    :tracks []
+                    :query ""}))
 
 (defn update-state! [k value]
   (swap! state assoc k value))
@@ -17,7 +18,8 @@
 
 (defn get-tracks []
   (GET (str (@state :server) "/api/tracks")
-       {:handler #(update-state! :tracks (% "items"))
+       {:params {:q (@state :query)}
+        :handler #(update-state! :tracks (% "items"))
         :response-format :json}))
 
 (defn enqueue-track [track]
@@ -47,9 +49,16 @@
   [:input {:type "button" :value "Enqueue"
            :on-click #(enqueue-track track)}])
 
+(defn search-box []
+  [:input {:type "text"
+           :value (@state :query)
+           :on-change #(update-state! :query
+                                      (-> % .-target .-value))}])
+
 (defn tracks-div []
-  (js/setTimeout get-tracks 1000)
+  (get-tracks)
   [:div [:h2 "Tracks"]
+   [search-box]
    [:ul (for [track (@state :tracks)]
           [:li
            (enqueue-button track)
