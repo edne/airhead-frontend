@@ -3,8 +3,7 @@
   (:require [reagent.core :as r]
             [ajax.core :refer [GET PUT]]))
 
-(def state (r/atom {:server "http://localhost:8080"
-                    :playlist []
+(def state (r/atom {:playlist []
                     :tracks []
                     :query ""}))
 
@@ -12,29 +11,22 @@
   (swap! state assoc k value))
 
 (defn get-playlist []
-  (GET (str (@state :server) "/api/queue")
+  (GET "/api/queue"
        {:handler #(update-state! :playlist (% "items"))
         :response-format :json}))
 
 (defn get-tracks []
-  (GET (str (@state :server) "/api/tracks")
+  (GET "/api/tracks"
        {:params {:q (@state :query)}
         :handler #(update-state! :tracks (% "items"))
         :response-format :json}))
 
 (defn enqueue-track [track]
   (let [uuid (track "uuid")]
-    (PUT (str (@state :server) "/api/enqueue/" uuid))))
+    (PUT (str "/api/enqueue/" uuid))))
 
 ;; -------------------------
 ;; Views
-
-(defn server-form []
-  [:form
-   [:input {:type "text"
-            :value (@state :server)
-            :on-change #(update-state! :server
-                                       (-> % .-target .-value))}]])
 
 (defn track-span [track]
   (str (track "artist") " - " (track "title")))
@@ -66,7 +58,6 @@
 
 (defn home-page []
   [:div [:h1 "Airhead"]
-   [server-form]
    [playlist-div]
    [tracks-div]])
 
