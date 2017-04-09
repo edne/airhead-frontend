@@ -10,16 +10,20 @@
 (defn update-state! [k value]
   (swap! state assoc k value))
 
+(defn get-json [url handler params]
+  (GET url {:handler handler
+            :params params
+            :response-format :json}))
+
 (defn get-playlist []
-  (GET "/api/queue"
-       {:handler #(update-state! :playlist (% "items"))
-        :response-format :json}))
+  (get-json "/api/queue"
+            #(update-state! :playlist (% "items"))
+            {}))
 
 (defn get-tracks []
-  (GET "/api/tracks"
-       {:params {:q (@state :query)}
-        :handler #(update-state! :tracks (% "items"))
-        :response-format :json}))
+  (get-json "/api/tracks"
+            #(update-state! :tracks (% "items"))
+            {:q (@state :query)}))
 
 (defn enqueue-track [track]
   (let [uuid (track "uuid")]
