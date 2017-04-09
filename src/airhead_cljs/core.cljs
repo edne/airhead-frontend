@@ -67,6 +67,8 @@
 
 (defn home-page []
   [:div [:h1 "Airhead"]
+   [:audio {:src "http://localhost:8000/airhead"
+            :controls "controls"}]
    [playlist-section]
    [tracks-section]])
 
