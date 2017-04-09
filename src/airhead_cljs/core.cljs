@@ -10,7 +10,7 @@
 
 (defn enqueue-track [track]
   (let [uuid (track "uuid")]
-    (PUT (str "/api/enqueue/" uuid))))
+    (PUT (str "/api/queue/" uuid))))
 
 ;; -------------------------
 ;; Views
