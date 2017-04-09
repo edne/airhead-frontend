@@ -24,11 +24,14 @@
             :on-change #(update-state! :server
                                        (-> % .-target .-value))}]])
 
+(defn track-span [track]
+  (str (track "artist") " - " (track "title")))
+
 (defn playlist-div []
   (js/setTimeout get-playlist 1000)
   [:div [:h2 "Playlist"]
    [:ul (for [track (@state :playlist)]
-          [:li (track "title")])]])
+          [:li (track-span track)])]])
 
 (defn home-page []
   [:div [:h1 "Airhead"]
