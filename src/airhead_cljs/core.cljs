@@ -46,9 +46,8 @@
            :value (@state :query)
            :on-change #(update-state! :query
                                       (-> % .-target .-value))}])
-
 (defn tracks-div []
-  (get-tracks)
+  (js/setTimeout get-tracks 1000)
   [:div [:h2 "Tracks"]
    [search-box]
    [:ul (for [track (@state :tracks)]
@@ -56,10 +55,22 @@
            (enqueue-button track)
            (track-span track)])]])
 
+(defn upload-form []
+  [:form {:enc-type "multipart/form-data"
+          :method "POST" :action "/api/upload"}
+   [:input {:type "file" :name "track"}]
+   [:input {:type "submit"}]])
+
+(defn upload-div []
+  [:div
+   [:h2 "Upload"]
+   [upload-form]])
+
 (defn home-page []
   [:div [:h1 "Airhead"]
    [playlist-div]
-   [tracks-div]])
+   [tracks-div]
+   [upload-div]])
 
 ;; -------------------------
 ;; Initialize app
