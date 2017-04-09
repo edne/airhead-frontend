@@ -16,7 +16,7 @@
 ;; Views
 
 (defn track-span [track]
-  (str (track "artist") " - " (track "title")))
+  [:span (str (track "artist") " - " (track "title"))])
 
 (defn playlist-section []
   (let [playlist (r/atom [])
@@ -32,6 +32,24 @@
   [:input {:type "button" :value "Enqueue"
            :on-click #(enqueue-track track)}])
 
+(defn query-input [query]
+  [:input {:type "text"
+           :value @query
+           :on-change #(reset! query
+                               (-> % .-target .-value))}])
+
+(defn tracks-list [tracks]
+  [:ul (for [track @tracks]
+         [:li
+          [enqueue-button track]
+          [track-span track]])])
+
+(defn upload-form []
+  [:form {:enc-type "multipart/form-data"
+          :method "POST" :action "/api/upload"}
+   [:input {:type "file" :name "track"}]
+   [:input {:type "submit" :value "Upload"}]])
+
 (defn tracks-section []
   (let [tracks (r/atom [])
         query (r/atom "")
@@ -43,30 +61,14 @@
     (fn []
       (js/setTimeout get-tracks 1000)
       [:div [:h2 "Tracks"]
-       [:input {:type "text"
-                :value @query
-                :on-change reset-query}]
-       [:ul (for [track @tracks]
-              [:li
-               (enqueue-button track)
-               (track-span track)])]])))
-
-(defn upload-form []
-  [:form {:enc-type "multipart/form-data"
-          :method "POST" :action "/api/upload"}
-   [:input {:type "file" :name "track"}]
-   [:input {:type "submit"}]])
-
-(defn upload-section []
-  [:div
-   [:h2 "Upload"]
-   [upload-form]])
+       [query-input query]
+       [tracks-list tracks]
+       [upload-form]])))
 
 (defn home-page []
   [:div [:h1 "Airhead"]
    [playlist-section]
-   [tracks-section]
-   [upload-section]])
+   [tracks-section]])
 
 ;; -------------------------
 ;; Initialize app
