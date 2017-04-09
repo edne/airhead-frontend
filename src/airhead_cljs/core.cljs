@@ -3,13 +3,6 @@
   (:require [reagent.core :as r]
             [ajax.core :refer [GET PUT]]))
 
-(def state (r/atom {:playlist []
-                    :tracks []
-                    :query ""}))
-
-(defn update-state! [k value]
-  (swap! state assoc k value))
-
 (defn get-json [url handler params]
   (GET url {:handler handler
             :params params
@@ -26,39 +19,37 @@
   (str (track "artist") " - " (track "title")))
 
 (defn playlist-section []
-  (let [get-playlist  (fn []
-                        (get-json "/api/queue"
-                                  #(update-state! :playlist (% "items"))
-                                  {}))]
-
-    (js/setTimeout get-playlist 1000)
-    [:div [:h2 "Playlist"]
-     [:ul (for [track (@state :playlist)]
-            [:li (track-span track)])]]))
+  (let [playlist (r/atom [])
+        reset #(reset! playlist (% "items"))
+        get-playlist #(get-json "/api/queue" reset {})]
+    (fn []
+      (js/setTimeout get-playlist 1000)
+      [:div [:h2 "Playlist"]
+       [:ul (for [track @playlist]
+              [:li (track-span track)])]])))
 
 (defn enqueue-button [track]
   [:input {:type "button" :value "Enqueue"
            :on-click #(enqueue-track track)}])
 
-(defn search-box []
-  [:input {:type "text"
-           :value (@state :query)
-           :on-change #(update-state! :query
-                                      (-> % .-target .-value))}])
 (defn tracks-section []
-  (let [get-tracks (fn []
-                     (get-json "/api/tracks"
-                               #(update-state! :tracks (% "items"))
-                               {:q (@state :query)}))]
-
-
-    (js/setTimeout get-tracks 1000)
-    [:div [:h2 "Tracks"]
-     [search-box]
-     [:ul (for [track (@state :tracks)]
-            [:li
-             (enqueue-button track)
-             (track-span track)])]]))
+  (let [tracks (r/atom [])
+        query (r/atom "")
+        reset-tracks #(reset! tracks (% "items"))
+        reset-query #(reset! query (-> % .-target .-value))
+        get-tracks (fn []
+                     (get-json "/api/tracks" reset-tracks
+                               {:q @query}))]
+    (fn []
+      (js/setTimeout get-tracks 1000)
+      [:div [:h2 "Tracks"]
+       [:input {:type "text"
+                :value @query
+                :on-change reset-query}]
+       [:ul (for [track @tracks]
+              [:li
+               (enqueue-button track)
+               (track-span track)])]])))
 
 (defn upload-form []
   [:form {:enc-type "multipart/form-data"
