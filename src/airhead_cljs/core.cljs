@@ -46,7 +46,7 @@
 
 (defn upload-form []
   [:form {:enc-type "multipart/form-data"
-          :method "POST" :action "/api/upload"}
+          :method "POST" :action "/api/tracks"}
    [:input {:type "file" :name "track"}]
    [:input {:type "submit" :value "Upload"}]])
 
