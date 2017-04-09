@@ -15,16 +15,6 @@
             :params params
             :response-format :json}))
 
-(defn get-playlist []
-  (get-json "/api/queue"
-            #(update-state! :playlist (% "items"))
-            {}))
-
-(defn get-tracks []
-  (get-json "/api/tracks"
-            #(update-state! :tracks (% "items"))
-            {:q (@state :query)}))
-
 (defn enqueue-track [track]
   (let [uuid (track "uuid")]
     (PUT (str "/api/enqueue/" uuid))))
@@ -35,11 +25,16 @@
 (defn track-span [track]
   (str (track "artist") " - " (track "title")))
 
-(defn playlist-div []
-  (js/setTimeout get-playlist 1000)
-  [:div [:h2 "Playlist"]
-   [:ul (for [track (@state :playlist)]
-          [:li (track-span track)])]])
+(defn playlist-section []
+  (let [get-playlist  (fn []
+                        (get-json "/api/queue"
+                                  #(update-state! :playlist (% "items"))
+                                  {}))]
+
+    (js/setTimeout get-playlist 1000)
+    [:div [:h2 "Playlist"]
+     [:ul (for [track (@state :playlist)]
+            [:li (track-span track)])]]))
 
 (defn enqueue-button [track]
   [:input {:type "button" :value "Enqueue"
@@ -50,14 +45,20 @@
            :value (@state :query)
            :on-change #(update-state! :query
                                       (-> % .-target .-value))}])
-(defn tracks-div []
-  (js/setTimeout get-tracks 1000)
-  [:div [:h2 "Tracks"]
-   [search-box]
-   [:ul (for [track (@state :tracks)]
-          [:li
-           (enqueue-button track)
-           (track-span track)])]])
+(defn tracks-section []
+  (let [get-tracks (fn []
+                     (get-json "/api/tracks"
+                               #(update-state! :tracks (% "items"))
+                               {:q (@state :query)}))]
+
+
+    (js/setTimeout get-tracks 1000)
+    [:div [:h2 "Tracks"]
+     [search-box]
+     [:ul (for [track (@state :tracks)]
+            [:li
+             (enqueue-button track)
+             (track-span track)])]]))
 
 (defn upload-form []
   [:form {:enc-type "multipart/form-data"
@@ -65,16 +66,16 @@
    [:input {:type "file" :name "track"}]
    [:input {:type "submit"}]])
 
-(defn upload-div []
+(defn upload-section []
   [:div
    [:h2 "Upload"]
    [upload-form]])
 
 (defn home-page []
   [:div [:h1 "Airhead"]
-   [playlist-div]
-   [tracks-div]
-   [upload-div]])
+   [playlist-section]
+   [tracks-section]
+   [upload-section]])
 
 ;; -------------------------
 ;; Initialize app
