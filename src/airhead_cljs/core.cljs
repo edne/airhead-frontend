@@ -32,12 +32,6 @@
   [:input {:type "button" :value "Enqueue"
            :on-click #(enqueue-track track)}])
 
-(defn query-input [query]
-  [:input {:type "text"
-           :value @query
-           :on-change #(reset! query
-                               (-> % .-target .-value))}])
-
 (defn tracks-list [tracks]
   [:ul (for [track @tracks]
          [:li
@@ -54,14 +48,17 @@
   (let [tracks (r/atom [])
         query (r/atom "")
         reset-tracks #(reset! tracks (% "items"))
-        reset-query #(reset! query (-> % .-target .-value))
         get-tracks (fn []
                      (get-json "/api/tracks" reset-tracks
-                               {:q @query}))]
+                               {:q @query}))
+        reset-query (fn [e]
+                      (reset! query (-> e .-target .-value))
+                      (get-tracks))]
+    (get-tracks)
     (fn []
-      (js/setTimeout get-tracks 1000)
       [:div [:h2 "Tracks"]
-       [query-input query]
+       [:input {:type "text" :value @query
+                :on-change reset-query}]
        [tracks-list tracks]
        [upload-form]])))
 
