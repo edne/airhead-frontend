@@ -1,6 +1,6 @@
 (ns airhead-cljs.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [reagent.core :as r]
+  (:require [reagent.core :as r :refer [atom]]
             [ajax.core :refer [GET POST PUT]]))
 
 (defn get-json [url handler params]
@@ -15,7 +15,7 @@
   [:span (str (track "artist") " - " (track "title"))])
 
 (defn playlist-section []
-  (let [playlist (r/atom [])
+  (let [playlist (atom [])
         reset #(reset! playlist (% "items"))
         get-playlist #(get-json "/api/queue" reset {})]
     (fn []
@@ -47,8 +47,8 @@
             :on-click post-track}]])
 
 (defn tracks-section []
-  (let [tracks (r/atom [])
-        query (r/atom "")
+  (let [tracks (atom [])
+        query (atom "")
         reset-tracks #(reset! tracks (% "items"))
         get-tracks (fn []
                      (get-json "/api/tracks" reset-tracks
