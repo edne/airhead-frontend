@@ -14,6 +14,16 @@
 (defn track-span [track]
   [:span (str (track "artist") " - " (track "title"))])
 
+
+(defn current-track-section []
+  (let [current-track (atom {})
+        reset #(reset! current-track (% "track"))
+        get-track #(get-json "/api/queue/current" reset {})]
+    (fn []
+      (js/setTimeout get-track 1000)
+      [:div
+       [:strong "Now playing: "] [track-span @current-track]])))
+
 (defn playlist-section []
   (let [playlist (atom [])
         reset #(reset! playlist (% "items"))
@@ -68,6 +78,7 @@
   [:div [:h1 "Airhead"]
    [:audio {:src "http://localhost:8000/airhead"
             :controls "controls"}]
+   [current-track-section]
    [playlist-section]
    [tracks-section]])
 
