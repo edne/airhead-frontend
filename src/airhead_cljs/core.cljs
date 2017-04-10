@@ -1,16 +1,12 @@
 (ns airhead-cljs.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [reagent.core :as r]
-            [ajax.core :refer [GET PUT]]))
+            [ajax.core :refer [GET POST PUT]]))
 
 (defn get-json [url handler params]
   (GET url {:handler handler
             :params params
             :response-format :json}))
-
-(defn enqueue-track [track]
-  (let [uuid (track "uuid")]
-    (PUT (str "/api/queue/" uuid))))
 
 ;; -------------------------
 ;; Views
@@ -30,7 +26,8 @@
 
 (defn enqueue-button [track]
   [:input {:type "button" :value "Enqueue"
-           :on-click #(enqueue-track track)}])
+           :on-click #(PUT (str "/api/queue/"
+                                (track "uuid")))}])
 
 (defn tracks-list [tracks]
   [:ul (for [track @tracks]
@@ -38,11 +35,16 @@
           [enqueue-button track]
           [track-span track]])])
 
+(defn post-track []
+  (let [form (.getElementById js/document "upload-form")]
+    (POST "/api/tracks" {:enc-type "multipart/form-data"
+                         :body (js/FormData. form)})))
+
 (defn upload-form []
-  [:form {:enc-type "multipart/form-data"
-          :method "POST" :action "/api/tracks"}
+  [:form {:id "upload-form"}
    [:input {:type "file" :name "track"}]
-   [:input {:type "submit" :value "Upload"}]])
+   [:input {:type "button" :value "Upload"
+            :on-click post-track}]])
 
 (defn tracks-section []
   (let [tracks (r/atom [])
