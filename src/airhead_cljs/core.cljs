@@ -75,12 +75,16 @@
        [upload-form]])))
 
 (defn home-page []
-  [:div [:h1 "Airhead"]
-   [:audio {:src "http://localhost:8000/airhead"
-            :controls "controls"}]
-   [current-track-section]
-   [playlist-section]
-   [tracks-section]])
+  (let [info (atom {})]
+    (get-json "/api/info" #(reset! info %) {})
+    (fn []
+      [:div [:h1 (@info "name")]
+       [:p (@info "greet_message")]
+       [:p [:audio {:src (@info "stream_url")
+                :controls "controls"}]]
+       [current-track-section]
+       [playlist-section]
+       [tracks-section]])))
 
 ;; -------------------------
 ;; Initialize app
