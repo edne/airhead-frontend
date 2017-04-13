@@ -26,8 +26,8 @@
   (let [current-track (atom {})
         reset         #(reset! current-track (% "track"))
         get-track     #(get-json "/api/queue/current" reset)]
-    (js/setTimeout get-track 1000)
     (fn []
+      (js/setTimeout get-track 1000)
       [:div
        [track-span @current-track]])))
 
@@ -35,8 +35,8 @@
   (let [playlist     (atom [])
         reset        #(reset! playlist (% "items"))
         get-playlist #(get-json "/api/queue" reset)]
-    (js/setTimeout get-playlist 1000)
     (fn []
+      (js/setTimeout get-playlist 1000)
       [:div
        [:h2 "Playlist"]
        [:ul (for [track @playlist]
