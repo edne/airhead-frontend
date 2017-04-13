@@ -3,10 +3,11 @@
   (:require [reagent.core :as r :refer [atom]]
             [ajax.core :refer [GET POST PUT]]))
 
-(defn get-json [url handler params]
-  (GET url {:handler handler
-            :params params
-            :response-format :json}))
+(defn get-json
+  ([url handler] (get-json url handler []))
+  ([url handler params] (GET url {:handler handler
+                                  :params params
+                                  :response-format :json})))
 
 ;; -------------------------
 ;; Views
@@ -15,22 +16,29 @@
   [:span (str (track "artist") " - " (track "title"))])
 
 
+(defn stream-section [url]
+  [:div
+   [:p [:audio {:src url :controls "controls"}]]
+   [:p [:a {:href url} url]]])
+
+
 (defn current-track-section []
   (let [current-track (atom {})
-        reset #(reset! current-track (% "track"))
-        get-track #(get-json "/api/queue/current" reset {})]
+        reset         #(reset! current-track (% "track"))
+        get-track     #(get-json "/api/queue/current" reset)]
+    (js/setTimeout get-track 1000)
     (fn []
-      (js/setTimeout get-track 1000)
       [:div
-       [:strong "Now playing: "] [track-span @current-track]])))
+       [track-span @current-track]])))
 
 (defn playlist-section []
-  (let [playlist (atom [])
-        reset #(reset! playlist (% "items"))
-        get-playlist #(get-json "/api/queue" reset {})]
+  (let [playlist     (atom [])
+        reset        #(reset! playlist (% "items"))
+        get-playlist #(get-json "/api/queue" reset)]
+    (js/setTimeout get-playlist 1000)
     (fn []
-      (js/setTimeout get-playlist 1000)
-      [:div [:h2 "Playlist"]
+      [:div
+       [:h2 "Playlist"]
        [:ul (for [track @playlist]
               [:li (track-span track)])]])))
 
@@ -46,42 +54,48 @@
           [track-span track]])])
 
 (defn post-track []
-  (let [form (.getElementById js/document "upload-form")]
+  ;; TODO: do not use element id
+  (let [form (.getElementById js/document
+                              "upload-form")]
     (POST "/api/tracks" {:enc-type "multipart/form-data"
                          :body (js/FormData. form)})))
 
 (defn upload-form []
   [:form {:id "upload-form"}
-   [:input {:type "file" :name "track"}]
-   [:input {:type "button" :value "Upload"
+   [:input {:type "file"
+            :name "track"}]
+   [:input {:type "button"
+            :value "Upload"
             :on-click post-track}]])
 
 (defn tracks-section []
   (let [tracks (atom [])
-        query (atom "")
         reset-tracks #(reset! tracks (% "items"))
-        get-tracks (fn []
-                     (get-json "/api/tracks" reset-tracks
-                               {:q @query}))
+        get-tracks   #(get-json "/api/tracks"
+                                reset-tracks
+                                {:q %})
+        query  (atom "")
         reset-query (fn [e]
                       (reset! query (-> e .-target .-value))
-                      (get-tracks))]
-    (get-tracks)
+                      (get-tracks @query))]
+    (get-tracks @query)
     (fn []
-      [:div [:h2 "Tracks"]
-       [:input {:type "text" :value @query
+      [:div
+       [:h2 "Tracks"]
+       [:input {:type "text"
+                :value @query
                 :on-change reset-query}]
        [tracks-list tracks]
        [upload-form]])))
 
 (defn home-page []
   (let [info (atom {})]
-    (get-json "/api/info" #(reset! info %) {})
+    (get-json "/api/info" #(reset! info %))
     (fn []
-      [:div [:h1 (@info "name")]
-       [:p (@info "greet_message")]
-       [:p [:audio {:src (@info "stream_url")
-                :controls "controls"}]]
+      [:div
+       [:h1 (@info "name")]
+       [:p  (@info "greet_message")]
+       [stream-section (@info "stream_url")]
        [current-track-section]
        [playlist-section]
        [tracks-section]])))
