@@ -1,7 +1,7 @@
 (ns airhead-cljs.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [reagent.core :as r :refer [atom]]
-            [ajax.core :refer [GET POST PUT]]))
+            [ajax.core :refer [GET POST PUT DELETE]]))
 
 (defn get-json
   ([url handler] (get-json url handler []))
@@ -18,8 +18,7 @@
 
 (defn stream-section [url]
   [:div
-   [:p [:audio {:src url :controls "controls"}]]
-   [:p [:a {:href url} url]]])
+   [:audio {:src url :controls "controls"}]])
 
 
 (defn current-track-section []
@@ -29,6 +28,7 @@
     (fn []
       (js/setTimeout get-track 1000)
       [:div
+       [:strong "Now playing: "]
        [track-span @current-track]])))
 
 (defn playlist-section []
@@ -40,12 +40,18 @@
       [:div
        [:h2 "Playlist"]
        [:ul (for [track @playlist]
-              [:li (track-span track)])]])))
+             [:li
+              (dequeue-button track)
+              (track-span track)])]])))
 
 (defn enqueue-button [track]
   [:input {:type "button" :value "Enqueue"
            :on-click #(PUT (str "/api/queue/"
                                 (track "uuid")))}])
+(defn dequeue-button[track]
+  [:input {:type "button" :value "Dequeue"
+           :on-click #(DELETE(str "/api/queue/"
+                                  (track "uuid")))}])
 
 (defn tracks-list [tracks]
   [:ul (for [track @tracks]
