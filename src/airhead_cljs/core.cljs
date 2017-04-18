@@ -18,8 +18,7 @@
 
 (defn stream-section [url]
   [:div
-   [:p [:audio {:src url :controls "controls"}]]
-   [:p [:a {:href url} url]]])
+   [:audio {:src url :controls "controls"}]])
 
 
 (defn current-track-section []
@@ -29,6 +28,7 @@
     (fn []
       (js/setTimeout get-track 1000)
       [:div
+       [:strong "Now playing: "]
        [track-span @current-track]])))
 
 (defn playlist-section []
