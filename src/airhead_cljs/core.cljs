@@ -31,6 +31,11 @@
        [:strong "Now playing: "]
        [track-span @current-track]])))
 
+(defn dequeue-button [track]
+  [:input {:type "button" :value "Dequeue"
+           :on-click #(DELETE (str "/api/queue/"
+                                   (track "uuid")))}])
+
 (defn playlist-section []
   (let [playlist     (atom [])
         reset        #(reset! playlist (% "items"))
@@ -48,10 +53,6 @@
   [:input {:type "button" :value "Enqueue"
            :on-click #(PUT (str "/api/queue/"
                                 (track "uuid")))}])
-(defn dequeue-button[track]
-  [:input {:type "button" :value "Dequeue"
-           :on-click #(DELETE(str "/api/queue/"
-                                  (track "uuid")))}])
 
 (defn tracks-list [tracks]
   [:ul (for [track @tracks]
