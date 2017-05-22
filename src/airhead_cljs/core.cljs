@@ -45,9 +45,9 @@
       [:div
        [:h2 "Playlist"]
        [:ul (for [track @playlist]
-             [:li
-              (dequeue-button track)
-              (track-span track)])]])))
+              [:li
+               (dequeue-button track)
+               (track-span track)])]])))
 
 (defn enqueue-button [track]
   [:input {:type "button" :value "Enqueue"
@@ -67,13 +67,15 @@
     (POST "/api/tracks" {:enc-type "multipart/form-data"
                          :body (js/FormData. form)})))
 
-(defn upload-form []
-  [:form {:id "upload-form"}
-   [:input {:type "file"
-            :name "track"}]
-   [:input {:type "button"
-            :value "Upload"
-            :on-click post-track}]])
+(defn upload-section []
+  [:div
+   [:h2 "Upload"]
+   [:form {:id "upload-form"}
+    [:input {:type "file"
+             :name "track"}]
+    [:input {:type "button"
+             :value "Upload"
+             :on-click post-track}]]])
 
 (defn tracks-section []
   (let [tracks (atom [])
@@ -92,8 +94,7 @@
        [:input {:type "text"
                 :value @query
                 :on-change reset-query}]
-       [tracks-list tracks]
-       [upload-form]])))
+       [tracks-list tracks]])))
 
 (defn home-page []
   (let [info (atom {})]
@@ -104,6 +105,7 @@
        [:p  (@info "greet_message")]
        [stream-section (@info "stream_url")]
        [current-track-section]
+       [upload-section]
        [playlist-section]
        [tracks-section]])))
 
