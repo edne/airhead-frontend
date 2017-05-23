@@ -63,13 +63,16 @@
 (defn post-track [status]
   ;; TODO: do not use element id
   (let [form (.getElementById js/document
-                              "upload-form")]
+                              "upload-form")
+        on-success (fn []
+                     (reset! status "Done!")
+                     (.reset form))
+        on-error #(reset! status "Something went wrong")]
     (reset! status "Uploading...")
     (POST "/api/tracks" {:enc-type "multipart/form-data"
                          :body (js/FormData. form)
-                         :handler #(reset! status "Done!")
-                         :error-handler #(reset! status
-                                                 "Something went wrong")})))
+                         :handler on-success
+                         :error-handler on-error})))
 
 (defn upload-section []
   (let [upload-status (atom "")]
