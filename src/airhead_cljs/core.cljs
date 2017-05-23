@@ -60,22 +60,29 @@
           [enqueue-button track]
           [track-span track]])])
 
-(defn post-track []
+(defn post-track [status]
   ;; TODO: do not use element id
   (let [form (.getElementById js/document
                               "upload-form")]
+    (reset! status "Uploading...")
     (POST "/api/tracks" {:enc-type "multipart/form-data"
-                         :body (js/FormData. form)})))
+                         :body (js/FormData. form)
+                         :handler #(reset! status "Done!")
+                         :error-handler #(reset! status
+                                                 "Something went wrong")})))
 
 (defn upload-section []
-  [:div
-   [:h2 "Upload"]
-   [:form {:id "upload-form"}
-    [:input {:type "file"
-             :name "track"}]
-    [:input {:type "button"
-             :value "Upload"
-             :on-click post-track}]]])
+  (let [upload-status (atom "")]
+    (fn []
+      [:div
+       [:h2 "Upload"]
+       [:form {:id "upload-form"}
+        [:input {:type "file"
+                 :name "track"}]
+        [:input {:type "button"
+                 :value "Upload"
+                 :on-click #(post-track upload-status)}]]
+       [:div @upload-status]])))
 
 (defn tracks-section []
   (let [tracks (atom [])
