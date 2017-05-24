@@ -11,6 +11,22 @@
                   :library {}}))
 
 ;; -------------------------
+;;
+
+(defn info-get []
+  (GET "/api/info"
+       {:handler #(swap! state assoc :info %)
+        :response-format :json}))
+
+(defn library-get []
+  (GET "/api/library"
+       {:handler #(swap! state assoc :library %)
+        :response-format :json}))
+
+(defn playlist-add [id]
+  (PUT (str "/api/playlist/" id)))
+
+;; -------------------------
 ;; Views
 
 (defn info-component []
@@ -23,8 +39,14 @@
      [:div.player [:audio {:src url
                            :controls "controls"}]]]))
 
+(defn playlist-add-component [id]
+  [:input.add-button
+   {:type "button" :value "+"
+    :on-click #(playlist-add id)}])
+
 (defn track-component [track]
-  [:span (str (track "artist") " - " (track "title"))])
+  [:span.track
+   (str " " (track "artist") " - " (track "title"))])
 
 (defn library-component []
   (let [tracks (-> @state
@@ -33,7 +55,9 @@
     [:div.library
      [:h2 "Library"]
      [:ul (for [[id track] tracks]
-            [:li [track-component track]])]]))
+            [:li
+             [playlist-add-component id]
+             [track-component track]])]]))
 
 (defn page-component []
   [:div.page
@@ -44,12 +68,8 @@
 ;; Initialize app
 
 (defn mount-root []
-  (GET "/api/info"
-       {:handler #(swap! state assoc :info %)
-        :response-format :json})
-  (GET "/api/library"
-       {:handler #(swap! state assoc :library %)
-        :response-format :json})
+  (info-get)
+  (library-get)
 
   (r/render [page-component] (.getElementById js/document "app")))
 
