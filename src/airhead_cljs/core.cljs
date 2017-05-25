@@ -92,18 +92,27 @@
 (defn track-component [uuid]
   [:span.track
    ;(str " " (track "artist") " - " (track "title"))
-   (str uuid)
-   ])
+   (str uuid)])
+
+(defn now-playing-component []
+  [:div.now-playing
+   [:span "Now playing:"]
+   [track-component (get-in @state [:playlist "current"])]])
+
+(defn next-component []
+  [:div.next
+   [:span "Next:"]
+   [:ul
+    (for [uuid (get-in @state [:playlist "next"])]
+      [:li
+       [playlist-remove-component uuid]
+       [track-component uuid]])]])
 
 (defn playlist-component []
   [:div.library
    [:h2 "Playlist"]
-   [:div.now-playing "Now playing: "
-    [track-component (get-in @state [:playlist "current"])]]
-   [:ul.next (for [uuid (get-in @state [:playlist "next"])]
-          [:li
-           [playlist-remove-component uuid]
-           [track-component uuid]])]])
+   [now-playing-component]
+   [next-component]])
 
 (defn library-component []
   [:div.library
