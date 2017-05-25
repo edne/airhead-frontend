@@ -35,18 +35,27 @@
 (defn playlist-remove [id]
   (DELETE (str "/api/playlist/" id)))
 
+
+(defn polling-callback []
+  (info-get)
+  (playlist-get)
+  (library-get))
+
+(js/setInterval polling-callback 1000)
+
 ;; -------------------------
 ;; Views
 
 (defn info-component []
-  (let [title   (get-in @state [:info "name"])
-        message (get-in @state [:info "greet_message"])
-        url     (get-in @state [:info "stream_url"])]
-    [:div.info
-     [:h1 title]
-     [:div.greet-message message]
-     [:div.player [:audio {:src url
-                           :controls "controls"}]]]))
+  (fn []
+    (let [title   (get-in @state [:info "name"])
+          message (get-in @state [:info "greet_message"])
+          url     (get-in @state [:info "stream_url"])]
+      [:div.info
+       [:h1 title]
+       [:div.greet-message message]
+       [:div.player [:audio {:src url
+                             :controls "controls"}]]])))
 
 (defn playlist-add-component [uuid]
   [:input.add-button
@@ -65,22 +74,20 @@
    ])
 
 (defn playlist-component []
-  (let [tracks (@state :playlist)]
-    [:div.library
-     [:h2 "Playlist"]
-     [:ul (for [uuid tracks]
-            [:li
-             [playlist-remove-component uuid]
-             [track-component uuid]])]]))
+  [:div.library
+   [:h2 "Playlist"]
+   [:ul (for [uuid (@state :playlist)]
+          [:li
+           [playlist-remove-component uuid]
+           [track-component uuid]])]])
 
 (defn library-component []
-  (let [tracks (@state :library)]
-    [:div.library
-     [:h2 "Library"]
-     [:ul (for [uuid tracks]
-            [:li
-             [playlist-add-component uuid]
-             [track-component uuid]])]]))
+  [:div.library
+   [:h2 "Library"]
+   [:ul (for [uuid (@state :library)]
+          [:li
+           [playlist-add-component uuid]
+           [track-component uuid]])]])
 
 (defn page-component []
   [:div.page
@@ -92,10 +99,6 @@
 ;; Initialize app
 
 (defn mount-root []
-  (info-get)
-  (playlist-get)
-  (library-get)
-
   (r/render [page-component] (.getElementById js/document "app")))
 
 (defn init! []
