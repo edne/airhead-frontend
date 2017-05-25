@@ -8,7 +8,8 @@
 (def state (atom {:info {"name"          ""
                          "greet_message" ""
                          "stream_url"    ""}
-                  :library {}}))
+                  :playlist []
+                  :library []}))
 
 ;; -------------------------
 ;;
@@ -18,13 +19,21 @@
        {:handler #(swap! state assoc :info %)
         :response-format :json}))
 
+(defn playlist-get []
+  (GET "/api/playlist"
+       {:handler #(swap! state assoc :playlist (% "next"))
+        :response-format :json}))
+
 (defn library-get []
   (GET "/api/library"
-       {:handler #(swap! state assoc :library %)
+       {:handler #(swap! state assoc :library (% "tracks"))
         :response-format :json}))
 
 (defn playlist-add [id]
   (PUT (str "/api/playlist/" id)))
+
+(defn playlist-remove [id]
+  (DELETE (str "/api/playlist/" id)))
 
 ;; -------------------------
 ;; Views
@@ -39,29 +48,44 @@
      [:div.player [:audio {:src url
                            :controls "controls"}]]]))
 
-(defn playlist-add-component [id]
+(defn playlist-add-component [uuid]
   [:input.add-button
    {:type "button" :value "+"
-    :on-click #(playlist-add id)}])
+    :on-click #(playlist-add uuid)}])
 
-(defn track-component [track]
+(defn playlist-remove-component [uuid]
+  [:input.add-button
+   {:type "button" :value "-"
+    :on-click #(playlist-remove uuid)}])
+
+(defn track-component [uuid]
   [:span.track
-   (str " " (track "artist") " - " (track "title"))])
+   ;(str " " (track "artist") " - " (track "title"))
+   (str uuid)
+   ])
+
+(defn playlist-component []
+  (let [tracks (@state :playlist)]
+    [:div.library
+     [:h2 "Playlist"]
+     [:ul (for [uuid tracks]
+            [:li
+             [playlist-remove-component uuid]
+             [track-component uuid]])]]))
 
 (defn library-component []
-  (let [tracks (-> @state
-                   (get-in [:library "tracks"])
-                   seq)]
+  (let [tracks (@state :library)]
     [:div.library
      [:h2 "Library"]
-     [:ul (for [[id track] tracks]
+     [:ul (for [uuid tracks]
             [:li
-             [playlist-add-component id]
-             [track-component track]])]]))
+             [playlist-add-component uuid]
+             [track-component uuid]])]]))
 
 (defn page-component []
   [:div.page
    [info-component]
+   [playlist-component]
    [library-component]])
 
 ;; -------------------------
@@ -69,6 +93,7 @@
 
 (defn mount-root []
   (info-get)
+  (playlist-get)
   (library-get)
 
   (r/render [page-component] (.getElementById js/document "app")))
