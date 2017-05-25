@@ -22,7 +22,7 @@
 
 (defn playlist-get []
   (GET "/api/playlist"
-       {:handler #(swap! state assoc :playlist (% "next"))
+       {:handler #(swap! state assoc :playlist %)
         :response-format :json}))
 
 (defn playlist-add [id]
@@ -98,7 +98,9 @@
 (defn playlist-component []
   [:div.library
    [:h2 "Playlist"]
-   [:ul (for [uuid (@state :playlist)]
+   [:div.now-playing "Now playing: "
+    [track-component (get-in @state [:playlist "current"])]]
+   [:ul.next (for [uuid (get-in @state [:playlist "next"])]
           [:li
            [playlist-remove-component uuid]
            [track-component uuid]])]])
