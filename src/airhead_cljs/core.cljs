@@ -15,12 +15,12 @@
 ;; -------------------------
 ;;
 
-(defn info-get []
+(defn get-info! []
   (GET "/api/info"
        {:handler #(swap! state assoc :info %)
         :response-format :json}))
 
-(defn playlist-get []
+(defn get-playlist! []
   (GET "/api/playlist"
        {:handler #(swap! state assoc :playlist %)
         :response-format :json}))
@@ -31,29 +31,32 @@
 (defn playlist-remove [id]
   (DELETE (str "/api/playlist/" id)))
 
-(defn library-get []
+(defn get-library! []
   (GET "/api/library"
        {:handler #(swap! state assoc :library (% "tracks"))
         :response-format :json}))
 
-(defn library-upload []
+(defn on-form-success [form]
+  (swap! state assoc :upload-status "Done!")
+  (.reset form))
+
+(defn on-form-error [form]
+  (swap! state assoc :upload-status "Something went wrong"))
+
+(defn upload! []
   ;; TODO: do not use element id
   (let [form (.getElementById js/document
-                              "upload-form")
-        on-success (fn []
-                     (swap! state assoc :upload-status "Done!")
-                     (.reset form))
-        on-error #(swap! state assoc :upload-status "Something went wrong")]
+                              "upload-form")]
     (swap! state assoc :upload-status "Uploading...")
     (POST "/api/library" {:enc-type "multipart/form-data"
                           :body (js/FormData. form)
-                          :handler on-success
-                          :error-handler on-error})))
+                          :handler #(on-form-success form)
+                          :error-handler #(on-form-error form)})))
 
 (defn polling-callback []
-  (info-get)
-  (playlist-get)
-  (library-get))
+  (get-info!)
+  (get-playlist!)
+  (get-library!))
 
 (js/setInterval polling-callback 1000)
 
@@ -76,7 +79,7 @@
    [:h2 "Upload"]
    [:form {:id "upload-form"}
     [:input {:type "file" :name "track"}]
-    [:input {:type "button" :value "Upload" :on-click library-upload}]]
+    [:input {:type "button" :value "Upload" :on-click upload!}]]
    [:div.upload-status (@state :upload-status)]])
 
 (defn playlist-add-component [uuid]
