@@ -82,20 +82,21 @@
     [:input {:type "button" :value "Upload" :on-click upload!}]]
    [:div.upload-status (@state :upload-status)]])
 
-(defn playlist-add-component [uuid]
+(defn playlist-add-component [track]
   [:input.add-button
    {:type "button" :value "+"
-    :on-click #(playlist-add uuid)}])
+    :on-click #(playlist-add (track "uuid"))}])
 
-(defn playlist-remove-component [uuid]
+(defn playlist-remove-component [track]
   [:input.add-button
    {:type "button" :value "-"
-    :on-click #(playlist-remove uuid)}])
+    :on-click #(playlist-remove (track "uuid"))}])
 
-(defn track-component [uuid]
+(defn track-component [track]
   [:span.track
-   ;(str " " (track "artist") " - " (track "title"))
-   (str uuid)])
+   (if track
+     (str " " (track "artist") " - " (track "title"))
+     "-")])
 
 (defn now-playing-component []
   [:div.now-playing
@@ -106,13 +107,13 @@
   [:div.next
    [:span "Next:"]
    [:ul
-    (for [uuid (get-in @state [:playlist "next"])]
+    (for [track (get-in @state [:playlist "next"])]
       [:li
-       [playlist-remove-component uuid]
-       [track-component uuid]])]])
+       [playlist-remove-component track]
+       [track-component track]])]])
 
 (defn playlist-component []
-  [:div.library
+  [:div.playlist
    [:h2 "Playlist"]
    [now-playing-component]
    [next-component]])
@@ -120,10 +121,10 @@
 (defn library-component []
   [:div.library
    [:h2 "Library"]
-   [:ul (for [uuid (@state :library)]
+   [:ul (for [track (@state :library)]
           [:li
-           [playlist-add-component uuid]
-           [track-component uuid]])]])
+           [playlist-add-component track]
+           [track-component track]])]])
 
 (defn page-component []
   [:div.page
