@@ -1,34 +1,50 @@
-body {
+html {
   font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-  max-width: 600px;
-  margin: 0 auto;
-  padding-top: 72px;
-  -webkit-font-smoothing: antialiased;
-  font-size: 1.125em;
-  color: #333;
-  line-height: 1.5em;
+  font-size: 14pt;
 }
 
-h1, h2, h3 {
-  color: #000;
-}
-h1 {
-  font-size: 2.5em
+h1 { font-size: 2.5em }
+h2 { font-size: 1.5em }
+
+p, li {
+    line-height: 1.3rem;
 }
 
-h2 {
-  font-size: 2em
+main {
+    width: 20rem;
+    margin: 2rem auto;
 }
 
-h3 {
-  font-size: 1.5em
+main > section {
+    margin: 1rem 0;
 }
 
-a {
-  text-decoration: none;
-  color: #09f;
+section, p, h1, h2 {
+    margin: 0.5rem 0;
 }
 
-a:hover {
-  text-decoration: underline;
+audio {
+    display: block;
+    width: 100%;
+}
+
+form {
+    display: flex;
+}
+
+input[type="file"],
+input[type="text"] {
+    flex: 1;
+}
+
+input[type="button"] {
+    vertical-align: text-bottom;
+}
+
+label {
+    margin-right: 0.3rem;
+}
+
+ul {
+    list-style-type: none;
 }
