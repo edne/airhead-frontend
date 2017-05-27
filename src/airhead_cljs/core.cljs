@@ -70,27 +70,27 @@
     (let [title   (get-in @state [:info "name"])
           message (get-in @state [:info "greet_message"])
           url     (get-in @state [:info "stream_url"])]
-      [:div.info
+      [:section#info
        [:h1 title]
-       [:div.greet-message message]
-       [:div.player [:audio {:src url
-                             :controls "controls"}]]])))
+       [:p message]
+       [:audio {:src url
+                :controls "controls"}]])))
 
 (defn upload-component []
-  [:div.upload
+  [:section#upload
    [:h2 "Upload"]
-   [:form {:id "upload-form"}
+   [:form {:id "upload"}
     [:input {:type "file" :name "track"}]
-    [:input {:type "button" :value "Upload" :on-click upload!}]]
-   [:div.upload-status (@state :upload-status)]])
+    [:input {:type "button" :value "Upload" :on-submit upload!}]]
+   [:p (@state :upload-status)]])
 
 (defn playlist-add-component [track]
-  [:input.add-button
+  [:input.add
    {:type "button" :value "+"
     :on-click #(playlist-add (track "uuid"))}])
 
 (defn playlist-remove-component [track]
-  [:input.add-button
+  [:input.remove
    {:type "button" :value "-"
     :on-click #(playlist-remove (track "uuid"))}])
 
@@ -101,12 +101,12 @@
      "-")])
 
 (defn now-playing-component []
-  [:div.now-playing
+  [:p
    [:span "Now playing:"]
    [track-component (get-in @state [:playlist "current"])]])
 
 (defn next-component []
-  [:div.next
+  [:section
    [:span "Next:"]
    [:ul
     (for [track (get-in @state [:playlist "next"])]
@@ -115,7 +115,7 @@
        [track-component track]])]])
 
 (defn playlist-component []
-  [:div.playlist
+  [:section#playlist
    [:h2 "Playlist"]
    [now-playing-component]
    [next-component]])
@@ -125,14 +125,16 @@
   (swap! state assoc :query (-> e .-target .-value)))
 
 (defn search-component []
-  [:div.search
-   [:span "Serach:"]
-   [:input {:type "text"
-            :value (@state :query)
-            :on-change on-query-change}]])
+  [:section#search
+   [:form
+    [:label {:for "query"} "Search:"]
+    [:input {:type "text"
+             :id "query"
+             :value (@state :query)
+             :on-change on-query-change}]]])
 
 (defn library-component []
-  [:div.library
+  [:section#library
    [:h2 "Library"]
    [search-component]
    [:ul (for [track (@state :library)]
@@ -141,7 +143,7 @@
            [track-component track]])]])
 
 (defn page-component []
-  [:div.page
+  [:main
    [info-component]
    [upload-component]
    [playlist-component]
