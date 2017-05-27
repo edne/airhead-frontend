@@ -34,6 +34,7 @@
 (defn get-library! []
   (GET "/api/library"
        {:handler #(swap! state assoc :library (% "tracks"))
+        :params {:q (@state :query)}
         :response-format :json}))
 
 (defn on-form-success [form]
@@ -51,7 +52,8 @@
     (POST "/api/library" {:enc-type "multipart/form-data"
                           :body (js/FormData. form)
                           :handler #(on-form-success form)
-                          :error-handler #(on-form-error form)})))
+                          :error-handler #(on-form-error form)
+                          :query ""})))
 
 (defn polling-callback []
   (get-info!)
@@ -118,9 +120,21 @@
    [now-playing-component]
    [next-component]])
 
+(defn on-query-change [e]
+  ;(get-library!)
+  (swap! state assoc :query (-> e .-target .-value)))
+
+(defn search-component []
+  [:div.search
+   [:span "Serach:"]
+   [:input {:type "text"
+            :value (@state :query)
+            :on-change on-query-change}]])
+
 (defn library-component []
   [:div.library
    [:h2 "Library"]
+   [search-component]
    [:ul (for [track (@state :library)]
           [:li
            [playlist-add-component track]
