@@ -1,59 +1,46 @@
 (ns airhead-cljs.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [reagent.core :as r :refer [atom]]
-            [ajax.core :refer [GET POST PUT DELETE]]))
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]))
 
 
-; TODO: use data.json to get map keys as :keywords
-(def state (atom {:info {"name"          ""
-                         "greet_message" ""
-                         "stream_url"    ""}
-                  :upload-status ""
+(def state (atom {:info {:name          ""
+                         :greet_message ""
+                         :stream_url    ""}
                   :playlist []
                   :library []}))
 
 ;; -------------------------
-;;
+;; Requests
+
+;; TODO: handle error responses
 
 (defn get-info! []
-  (GET "/api/info"
-       {:handler #(swap! state assoc :info %)
-        :response-format :json}))
+  (go (let [response (<! (http/get "/api/info"))]
+        (swap! state assoc :info (:body response)))))
 
 (defn get-playlist! []
-  (GET "/api/playlist"
-       {:handler #(swap! state assoc :playlist %)
-        :response-format :json}))
+  (go (let [response (<! (http/get "/api/playlist"))]
+        (swap! state assoc :playlist (:body response)))))
 
 (defn playlist-add [id]
-  (PUT (str "/api/playlist/" id)))
+  (http/put (str "/api/playlist/" id)))
 
 (defn playlist-remove [id]
-  (DELETE (str "/api/playlist/" id)))
+  (http/delete (str "/api/playlist/" id)))
 
 (defn get-library! []
-  (GET "/api/library"
-       {:handler #(swap! state assoc :library (% "tracks"))
-        :params {:q (@state :query)}
-        :response-format :json}))
-
-(defn on-form-success [form]
-  (swap! state assoc :upload-status "Done!")
-  (.reset form))
-
-(defn on-form-error [form]
-  (swap! state assoc :upload-status "Something went wrong"))
+  (go (let [response (<! (http/get "/api/library"
+                                   {:query-params {"q" (@state :query)}}))]
+        (swap! state assoc :library (get-in response [:body :tracks])))))
 
 (defn upload! []
   ;; TODO: do not use element id
   (let [form (.getElementById js/document
                               "upload-form")]
-    (swap! state assoc :upload-status "Uploading...")
-    (POST "/api/library" {:enc-type "multipart/form-data"
-                          :body (js/FormData. form)
-                          :handler #(on-form-success form)
-                          :error-handler #(on-form-error form)
-                          :query ""})))
+    ;; TODO: progress bar
+    (http/post "/api/library" {:body (js/FormData. form)})))
 
 (defn polling-callback []
   (get-info!)
@@ -67,9 +54,9 @@
 
 (defn info-component []
   (fn []
-    (let [title   (get-in @state [:info "name"])
-          message (get-in @state [:info "greet_message"])
-          url     (get-in @state [:info "stream_url"])]
+    (let [title   (get-in @state [:info :name])
+          message (get-in @state [:info :greet_message])
+          url     (get-in @state [:info :stream_url])]
       [:section#info
        [:h1 title]
        [:p message]
@@ -81,35 +68,34 @@
    [:h2 "Upload"]
    [:form {:id "upload-form"}
     [:input {:type "file" :name "track"}]
-    [:input {:type "button" :value "Upload" :on-click upload!}]]
-   [:p (@state :upload-status)]])
+    [:input {:type "button" :value "Upload" :on-click upload!}]]])
 
 (defn playlist-add-component [track]
   [:input.add
    {:type "button" :value "+"
-    :on-click #(playlist-add (track "uuid"))}])
+    :on-click #(playlist-add (:uuid track))}])
 
 (defn playlist-remove-component [track]
   [:input.remove
    {:type "button" :value "-"
-    :on-click #(playlist-remove (track "uuid"))}])
+    :on-click #(playlist-remove (:uuid track))}])
 
 (defn track-component [track]
   [:span.track
    (if track
-     (str " " (track "artist") " - " (track "title"))
+     (str " " (:artist track) " - " (:title track))
      "-")])
 
 (defn now-playing-component []
   [:p
    [:span "Now playing:"]
-   [track-component (get-in @state [:playlist "current"])]])
+   [track-component (get-in @state [:playlist :current])]])
 
 (defn next-component []
   [:section
    [:span "Next:"]
    [:ul
-    (for [track (get-in @state [:playlist "next"])]
+    (for [track (get-in @state [:playlist :next])]
       [:li
        [playlist-remove-component track]
        [track-component track]])]])

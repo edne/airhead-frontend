@@ -7,7 +7,7 @@
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [org.clojure/clojurescript "1.9.495" :scope "provided"]
                  [reagent "0.6.1"]
-                 [cljs-ajax "0.5.8"]]
+                 [cljs-http "0.1.43"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.9"]]
