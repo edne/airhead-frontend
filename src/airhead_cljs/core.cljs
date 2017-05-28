@@ -79,9 +79,9 @@
 (defn upload-component []
   [:section#upload
    [:h2 "Upload"]
-   [:form {:id "upload"}
+   [:form {:id "upload-form"}
     [:input {:type "file" :name "track"}]
-    [:input {:type "button" :value "Upload" :on-submit upload!}]]
+    [:input {:type "button" :value "Upload" :on-click upload!}]]
    [:p (@state :upload-status)]])
 
 (defn playlist-add-component [track]
