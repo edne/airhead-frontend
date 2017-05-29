@@ -38,6 +38,17 @@
      (str " " (:artist track) " - " (:title track))
      "-")])
 
+(defn tracks-table [tracks button-component]
+  [:table.tracks-table
+    [:thead
+     [:tr
+      [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
+    [:tbody
+     (for [track tracks]
+       [:tr
+        [button-component]
+        [:td (track :title)] [:td (track :artist)] [:td (track :album)]])]])
+
 (defn now-playing-component []
   [:p
    [:span "Now playing:"]
@@ -45,18 +56,13 @@
 
 (defn next-component []
   [:section
-   [:span "Next:"]
-   [:ul
-    (for [track (@app-state :playlist)]
-      [:li
-       [playlist-remove-component track]
-       [track-component track]])]])
+   [tracks-table (@app-state :playlist) playlist-remove-component]])
 
 (defn playlist-component []
   [:section#playlist
    [:h2 "Playlist"]
    [now-playing-component]
-   [next-component]])
+   [tracks-table (@app-state :playlist) playlist-remove-component]])
 
 (defn on-query-change [e]
   ;(get-library!)
@@ -75,10 +81,7 @@
   [:section#library
    [:h2 "Library"]
    [search-component]
-   [:ul (for [track (@app-state :library)]
-          [:li
-           [playlist-add-component track]
-           [track-component track]])]])
+   [tracks-table (@app-state :library) playlist-remove-component]])
 
 (defn page-component []
   [:main
