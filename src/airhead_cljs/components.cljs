@@ -54,10 +54,6 @@
    [:span "Now playing:"]
    [track-component (@app-state :now-playing)]])
 
-(defn next-component []
-  [:section
-   [tracks-table (@app-state :playlist) playlist-remove-component]])
-
 (defn playlist-component []
   [:section#playlist
    [:h2 "Playlist"]
@@ -81,7 +77,7 @@
   [:section#library
    [:h2 "Library"]
    [search-component]
-   [tracks-table (@app-state :library) playlist-remove-component]])
+   [tracks-table (@app-state :library) playlist-add-component]])
 
 (defn page-component []
   [:main
