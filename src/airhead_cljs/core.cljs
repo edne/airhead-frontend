@@ -1,28 +1,33 @@
 (ns airhead-cljs.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [reagent.core :as r :refer [atom]]
+  (:require [reagent.core :as r]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]))
 
-
-(def state (atom {:info {:name          ""
-                         :greet_message ""
-                         :stream_url    ""}
-                  :playlist []
-                  :library []}))
+(def app-state (r/atom {:info {:name          ""
+                               :greet_message ""
+                               :stream_url    ""}
+                        :playlist []
+                        :now-playing nil
+                        :library []}))
 
 ;; -------------------------
 ;; Requests
 
 ;; TODO: handle error responses
 
+(defn update-state! [k v]
+  (swap! app-state assoc k v))
+
 (defn get-info! []
   (go (let [response (<! (http/get "/api/info"))]
-        (swap! state assoc :info (:body response)))))
+        (update-state! :info (:body response)))))
 
 (defn get-playlist! []
-  (go (let [response (<! (http/get "/api/playlist"))]
-        (swap! state assoc :playlist (:body response)))))
+  (go (let [response (<! (http/get "/api/playlist"))
+            body     (response :body)]
+        (update-state! :playlist    (body :next))
+        (update-state! :now-playing (body :current)))))
 
 (defn playlist-add [id]
   (http/put (str "/api/playlist/" id)))
@@ -32,8 +37,8 @@
 
 (defn get-library! []
   (go (let [response (<! (http/get "/api/library"
-                                   {:query-params {"q" (@state :query)}}))]
-        (swap! state assoc :library (get-in response [:body :tracks])))))
+                                   {:query-params {"q" (@app-state :query)}}))]
+        (update-state! :library (get-in response [:body :tracks])))))
 
 (defn upload! []
   ;; TODO: do not use element id
@@ -54,9 +59,10 @@
 
 (defn info-component []
   (fn []
-    (let [title   (get-in @state [:info :name])
-          message (get-in @state [:info :greet_message])
-          url     (get-in @state [:info :stream_url])]
+    (let [cursor  (r/cursor app-state [:info])
+          title   (@cursor :name)
+          message (@cursor :greet_message)
+          url     (@cursor :stream_url)]
       [:section#info
        [:h1 title]
        [:p message]
@@ -89,13 +95,13 @@
 (defn now-playing-component []
   [:p
    [:span "Now playing:"]
-   [track-component (get-in @state [:playlist :current])]])
+   [track-component (@app-state :now-playing)]])
 
 (defn next-component []
   [:section
    [:span "Next:"]
    [:ul
-    (for [track (get-in @state [:playlist :next])]
+    (for [track (@app-state :playlist)]
       [:li
        [playlist-remove-component track]
        [track-component track]])]])
@@ -108,7 +114,7 @@
 
 (defn on-query-change [e]
   ;(get-library!)
-  (swap! state assoc :query (-> e .-target .-value)))
+  (update-state! :query (-> e .-target .-value)))
 
 (defn search-component []
   [:section#search
@@ -116,14 +122,14 @@
     [:label {:for "query"} "Search:"]
     [:input {:type "text"
              :id "query"
-             :value (@state :query)
+             :value (@app-state :query)
              :on-change on-query-change}]]])
 
 (defn library-component []
   [:section#library
    [:h2 "Library"]
    [search-component]
-   [:ul (for [track (@state :library)]
+   [:ul (for [track (@app-state :library)]
           [:li
            [playlist-add-component track]
            [track-component track]])]])
