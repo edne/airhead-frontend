@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
-            [airhead-cljs.core :refer [app-state update-state!]]))
+            [airhead-cljs.state :refer [app-state update-state!]]))
 
 ;; TODO: handle error responses
 
