@@ -42,9 +42,9 @@
 
 (defn track-tr [track action-button]
   [:tr.track
-   (when action-button
-     [action-button])
-   [:td ]
+   [:td
+    (when action-button
+      [action-button track])]
    [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
 
 (defn tracks-table [tracks action-button]
