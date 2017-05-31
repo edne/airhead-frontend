@@ -14,7 +14,6 @@
 (defn now-playing []
   (let [track (@app-state :now-playing)]
     [:p#now-playing
-     [:span]
      (if track
        (str " " (:artist track) " - " (:title track))
        [:em "Nothing is playing"])]))
@@ -22,12 +21,12 @@
 (defn player-section []
   (let [cursor  (r/cursor app-state [:info])
         url     (@cursor :stream_url)]
-  [:section#player
-   [:div
-    [:audio {:controls "controls"}
-    [:source {:src url}]]
-    [:a {:href url}]]
-   [now-playing]]))
+    [:section#player
+     [:div
+      [:audio {:controls "controls"}
+       [:source {:src url}]]
+      [:a {:href url}]]
+     [now-playing]]))
 
 (defn upload-section []
   [:section#upload
