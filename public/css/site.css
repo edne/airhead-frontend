@@ -1,53 +1,61 @@
 html {
-  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-
-  max-width: 600px;
-  margin: 0 auto;
-
-  font-size: 1.125em;
-  line-height: 1.5em;
-
-  color: #333;
-  -webkit-font-smoothing: antialiased;
+    font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
+    font-size: 14pt;
 }
 
+/*****************************************************************************/
 
-h1, h2, h3 {
-  color: #000;
+h1, h2 {
+    margin: 1rem 0;
+    color: #000;
 }
 
-h1 {
-  font-size: 2.5em
+p, th, td {
+    margin: 0.5rem 0;
+    color: #333;
+    line-height: 1.2rem;
 }
 
-h2 {
-  font-size: 2em
-}
+h1 { font-size: 2.5em; }
+h2 { font-size: 2em;   }
 
-h3 {
-  font-size: 1.5em
-}
-
-p, li {
-    line-height: 1.3rem;
-}
+/*****************************************************************************/
 
 main {
+    max-width: 35rem;
     margin: 2rem auto;
 }
 
-main > section {
-    margin: 2rem 0;
+section {
+    margin: 1rem 0;
 }
 
-section, p, h1, h2 {
-    margin: 0.5rem 0;
-}
+/*****************************************************************************/
 
 audio {
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: 33rem;
+    vertical-align: middle;
 }
+
+audio + a {
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    float: right;
+    background: url(/img/external-link-square.svg) center/1.2rem no-repeat;
+}
+
+p#now-playing > span {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin: 0 0.5rem 0 0;
+    background: url(/img/music.svg) center/1rem no-repeat;
+    vertical-align: middle;
+}
+
+/*****************************************************************************/
 
 form {
     display: flex;
@@ -58,14 +66,23 @@ input[type="text"] {
     flex: 1;
 }
 
-input[type="button"] {
-    vertical-align: text-bottom;
-}
-
 label {
-    margin-right: 0.3rem;
+    margin-right: 0.5rem;
 }
 
-ul {
-    list-style-type: none;
+/*****************************************************************************/
+
+th:not(:first-child), td:not(:first-child) {
+    padding: 0 0.5rem;
 }
+
+button.add,
+button.remove {
+    height: 1rem;
+    width: 1rem;
+    border: none;
+    vertical-align: middle;
+}
+
+button.add    { background: url(/img/plus-square.svg)  center/1rem no-repeat; }
+button.remove { background: url(/img/minus-square.svg) center/1rem no-repeat; }

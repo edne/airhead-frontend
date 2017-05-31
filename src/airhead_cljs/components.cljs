@@ -3,25 +3,31 @@
             [airhead-cljs.state :refer [app-state update-state!]]
             [airhead-cljs.requests :as req]))
 
-(defn now-playing []
-  (let [track (@app-state :now-playing)]
-    [:p#now-playing
-     [:span "Now playing:"]
-     (if track
-       (str " " (:artist track) " - " (:title track))
-       "-")]))
-
 (defn header []
   (let [cursor  (r/cursor app-state [:info])
         title   (@cursor :name)
-        message (@cursor :greet_message)
-        url     (@cursor :stream_url)]
+        message (@cursor :greet_message)]
     [:header
      [:h1 title]
-     [:p message]
-     [:audio {:controls "controls"}
-      [:source {:src url}]]
-     [now-playing]]))
+     [:p message]]))
+
+(defn now-playing []
+  (let [track (@app-state :now-playing)]
+    [:p#now-playing
+     [:span]
+     (if track
+       (str " " (:artist track) " - " (:title track))
+       [:em "Nothing is playing"])]))
+
+(defn player-section []
+  (let [cursor  (r/cursor app-state [:info])
+        url     (@cursor :stream_url)]
+  [:section#player
+   [:div
+    [:audio {:controls "controls"}
+    [:source {:src url}]]
+    [:a {:href url}]]
+   [now-playing]]))
 
 (defn upload-section []
   [:section#upload
@@ -31,14 +37,12 @@
     [:input {:type "button" :value "Upload" :on-click req/upload!}]]])
 
 (defn playlist-add-button [track]
-  [:input.add
-   {:type "button" :value "+"
-    :on-click #(req/playlist-add! (:uuid track))}])
+  [:button.add
+   {:on-click #(req/playlist-add! (:uuid track))}])
 
 (defn playlist-remove-button [track]
-  [:input.remove
-   {:type "button" :value "-"
-    :on-click #(req/playlist-remove! (:uuid track))}])
+  [:button.remove
+   {:on-click #(req/playlist-remove! (:uuid track))}])
 
 (defn track-tr [track action-button]
   [:tr.track
@@ -81,6 +85,7 @@
 (defn page-component []
   [:main
    [header]
+   [player-section]
    [upload-section]
    [playlist-section]
    [library-section]])
