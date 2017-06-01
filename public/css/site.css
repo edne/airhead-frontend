@@ -10,10 +10,13 @@ h1, h2 {
     color: #000;
 }
 
-p, th, td {
+p, th, td, label {
     margin: 0.5rem 0;
-    color: #333;
     line-height: 1.2rem;
+}
+
+p, th, td, label, input {
+    color: #333;
 }
 
 h1 { font-size: 2.5em; }
@@ -26,32 +29,30 @@ main {
     margin: 2rem auto;
 }
 
-section {
+header, section {
     margin: 1rem 0;
 }
 
 /*****************************************************************************/
 
-audio {
-    display: inline-block;
+section#player audio {
     width: 33rem;
+}
+
+section#player a {
+    width: 1.5rem;
+    height: 1.5rem;
+    float: right;
+    background: url(/img/external-link-square.svg) center/cover no-repeat;
     vertical-align: middle;
 }
 
-audio + a {
-    display: inline-block;
-    width: 1.2rem;
-    height: 1.2rem;
-    float: right;
-    background: url(/img/external-link-square.svg) center/1.2rem no-repeat;
-}
-
-#note-icon {
+span.note-icon {
     display: inline-block;
     width: 1rem;
     height: 1rem;
     margin: 0 0.5rem 0 0;
-    background: url(/img/music.svg) center/1rem no-repeat;
+    background: url(/img/music.svg) center/cover no-repeat;
     vertical-align: middle;
 }
 
@@ -59,6 +60,7 @@ audio + a {
 
 form {
     display: flex;
+    align-items: center;
 }
 
 input[type="file"],
@@ -72,8 +74,30 @@ label {
 
 /*****************************************************************************/
 
-th:not(:first-child), td:not(:first-child) {
-    padding: 0 0.5rem;
+section#upload input[type="file"] {
+    flex-grow: 2;
+}
+
+section#upload input[type="button"] {
+    margin: 0 0.5rem 0 0.5rem;
+    flex-grow: 0;
+}
+
+section#upload progress {
+    flex-grow: 3;
+}
+
+/*****************************************************************************/
+
+th, td {
+    padding-bottom: 0.3rem;
+    vertical-align: middle;
+}
+
+th:not(:first-child),
+td:not(:first-child) {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 button.add,
@@ -84,5 +108,5 @@ button.remove {
     vertical-align: middle;
 }
 
-button.add    { background: url(/img/plus-square.svg)  center/1rem no-repeat; }
-button.remove { background: url(/img/minus-square.svg) center/1rem no-repeat; }
+button.add    { background: url(/img/plus-square.svg)  center/cover no-repeat; }
+button.remove { background: url(/img/minus-square.svg) center/cover no-repeat; }
