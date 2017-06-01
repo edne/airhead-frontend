@@ -59,7 +59,7 @@
    [:thead
     [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
    [:tbody (for [track tracks]
-             [track-tr track action-button])]])
+             ^{:key track} [track-tr track action-button])]])
 
 (defn playlist-section []
   [:section#playlist
