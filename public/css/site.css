@@ -46,7 +46,7 @@ audio + a {
     background: url(/img/external-link-square.svg) center/1.2rem no-repeat;
 }
 
-#note-icon {
+span.note-icon {
     display: inline-block;
     width: 1rem;
     height: 1rem;
