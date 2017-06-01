@@ -28,11 +28,15 @@
         (update-state! :library (get-in response [:body :tracks])))))
 
 (defn upload! []
-  ;; TODO: do not use element id
-  (let [form (.getElementById js/document
-                              "upload-form")]
-    ;; TODO: progress bar
-    (http/post "/api/library" {:body (js/FormData. form)})))
+ ;; TODO: do not use element id
+ (let [form (.getElementById js/document
+             "upload-form")]
+  (update-state! :upload-status "Uploading...")
+  ;; TODO: progress bar
+  (go (let [response (<! (http/post "/api/library"
+                          {:body (js/FormData. form)}))]
+       (update-state! :upload-status
+        "Done! Now wait for the track being transcoded.")))))
 
 (defn polling-callback []
   (get-info!)
