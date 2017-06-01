@@ -1,8 +1,10 @@
 (ns airhead-cljs.requests
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]
-            [airhead-cljs.state :refer [app-state update-state!]]))
+            [cljs.core.async :refer [<! chan]]
+            [airhead-cljs.state :refer [app-state update-state!]]
+            [goog.string :as gstring]
+            [goog.string.format]))
 
 ;; TODO: handle error responses
 
@@ -28,15 +30,25 @@
         (update-state! :library (get-in response [:body :tracks])))))
 
 (defn upload! []
- ;; TODO: do not use element id
- (let [form (.getElementById js/document
-             "upload-form")]
-  (update-state! :upload-status "Uploading...")
-  ;; TODO: progress bar
-  (go (let [response (<! (http/post "/api/library"
-                          {:body (js/FormData. form)}))]
-       (update-state! :upload-status
-        "Done! Now wait for the track being transcoded.")))))
+  ;; TODO: do not use element id
+  (let [form (.getElementById js/document "upload-form")
+        progress-chan (chan)
+        http-chan (http/post "/api/library" {:body (js/FormData. form)
+                                             :progress progress-chan})]
+    (go-loop []
+             (when-let [data (<! progress-chan)]
+               (when (= (data :direction) :upload)
+                 (let [loaded     (data :loaded)
+                       total      (data :total)
+                       percentage (-> loaded (/ total) (* 100))
+                       status     (gstring/format "Uploading: %.0f%"
+                                                  percentage)]
+                   (update-state! :upload-status status)))
+               (recur)))
+    (go (let [response (<! http-chan)]
+          ;; TODO: check response, and take transcoding status from a websocket
+          (update-state! :upload-status
+                         "Done! Now wait for the track being transcoded.")))))
 
 (defn polling-callback []
   (get-info!)
