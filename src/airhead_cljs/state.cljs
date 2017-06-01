@@ -3,7 +3,7 @@
 
 (def app-state (r/atom {:info {:name          ""
                                :greet_message ""
-                               :stream_url    ""}
+                               :stream_url    nil}
                         :playlist []
                         :now-playing nil
                         :library []

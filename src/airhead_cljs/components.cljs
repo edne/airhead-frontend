@@ -23,10 +23,11 @@
   (let [cursor  (r/cursor app-state [:info])
         url     (@cursor :stream_url)]
     [:section#player
-     [:div
-      [:audio {:controls "controls"}
-       [:source {:src url}]]
-      [:a {:href url}]]
+     (when url
+       [:div
+        [:audio {:controls "controls"}
+         [:source {:src url}]]
+        [:a {:href url}]])
      [now-playing]]))
 
 (defn upload-section []
