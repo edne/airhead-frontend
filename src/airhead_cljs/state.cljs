@@ -7,6 +7,7 @@
                         :playlist []
                         :now-playing nil
                         :library []
+                        :upload-percentage 0
                         :upload-status "Ready to upload."}))
 
 (defn update-state! [k v]

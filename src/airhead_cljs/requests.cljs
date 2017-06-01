@@ -43,12 +43,13 @@
                        percentage (-> loaded (/ total) (* 100))
                        status     (gstring/format "Uploading: %.0f%"
                                                   percentage)]
+                   (update-state! :upload-percentage percentage)
                    (update-state! :upload-status status)))
                (recur)))
     (go (let [response (<! http-chan)]
-          ;; TODO: check response, and take transcoding status from a websocket
-          (update-state! :upload-status
-                         "Done! Now wait for the track being transcoded.")))))
+         ;; TODO: check response, and take transcoding status from a websocket
+         (update-state! :upload-status
+          "Done! It will show in the library once it gets transcoded.")))))
 
 (defn polling-callback []
   (get-info!)

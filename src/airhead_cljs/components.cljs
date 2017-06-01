@@ -34,7 +34,8 @@
     [:h2 "Upload"]
     [:form {:id "upload-form"}
            [:input {:type "file" :name "track"}]
-           [:input {:type "button" :value "Upload" :on-click req/upload!}]]
+           [:input {:type "button" :value "Upload" :on-click req/upload!}]
+           [:progress {:max 100 :value (@app-state :upload-percentage)}]]
     [:p (@app-state :upload-status)]])
 
 (defn playlist-add-button [track]
