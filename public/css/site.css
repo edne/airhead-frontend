@@ -26,7 +26,7 @@ main {
     margin: 2rem auto;
 }
 
-section {
+header, section {
     margin: 1rem 0;
 }
 
