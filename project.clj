@@ -5,8 +5,8 @@
             :url "https://opensource.org/licenses/BSD-2-Clause"}
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.495" :scope "provided"]
-                 [reagent "0.6.1"]
+                 [org.clojure/clojurescript "1.9.562" :scope "provided"]
+                 [reagent "0.6.2"]
                  [cljs-http "0.1.43"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
@@ -49,6 +49,6 @@
 
   :aliases {"release" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
-  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.9"]
-                                  [org.clojure/tools.nrepl "0.2.12"]
+  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.10"]
+                                  [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2-SNAPSHOT"]]}})
