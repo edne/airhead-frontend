@@ -60,8 +60,12 @@
 (get-updates!)
 
 (go
-  (let [host js/window.location.host
-        ws-path (str "ws://" host "/api/ws")
+  (let [location js/window.location
+        host     location.host
+        protocol location.protocol
+        ws-path (str (if (= protocol "https:")
+                       "wss://" "ws://")
+                     host "/api/ws")
         {:keys [ws-channel]} (<! (ws-ch ws-path {:format :json-kw}))]
     (loop []
       (let [{:keys [message]} (<! ws-channel)]
