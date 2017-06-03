@@ -7,10 +7,11 @@
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [org.clojure/clojurescript "1.9.562" :scope "provided"]
                  [reagent "0.6.2"]
-                 [cljs-http "0.1.43"]]
+                 [cljs-http "0.1.43"]
+                 [jarohen/chord "0.8.1"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.9"]]
+            [lein-figwheel "0.5.10"]]
 
   :min-lein-version "2.5.0"
 

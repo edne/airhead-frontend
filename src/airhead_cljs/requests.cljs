@@ -1,6 +1,7 @@
 (ns airhead-cljs.requests
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs-http.client :as http]
+            [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! chan]]
             [airhead-cljs.state :refer [app-state update-state!]]
             [goog.string :as gstring]
@@ -47,13 +48,23 @@
                    (update-state! :upload-status status)))
                (recur)))
     (go (let [response (<! http-chan)]
-         ;; TODO: check response, and take transcoding status from a websocket
-         (update-state! :upload-status
-          "Done! It will show in the library once it gets transcoded.")))))
+          ;; TODO: check response, and take transcoding status from a websocket
+          (update-state! :upload-status
+                         "Done! It will show in the library once it gets transcoded.")))))
 
-(defn polling-callback []
+(defn get-updates! []
   (get-info!)
   (get-playlist!)
   (get-library!))
 
-(js/setInterval polling-callback 1000)
+(get-updates!)
+
+(go
+  (let [host js/window.location.host
+        ws-path (str "ws://" host "/ws")
+        {:keys [ws-channel]} (<! (ws-ch ws-path {:format :json-kw}))]
+    (loop []
+      (let [{:keys [message]} (<! ws-channel)]
+        ;; TODO: parse message
+        (get-updates!)
+        (when message (recur))))))
