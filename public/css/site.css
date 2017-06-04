@@ -101,11 +101,13 @@ td:not(:first-child) {
 }
 
 button.add,
-button.remove {
+button.remove,
+button.sort {
     height: 1rem;
     width: 1rem;
     border: none;
     vertical-align: middle;
+    background: none
 }
 
 button.add    { background: url(/img/plus-square.svg)  center/cover no-repeat; }

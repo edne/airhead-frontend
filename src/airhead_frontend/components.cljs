@@ -61,6 +61,32 @@
    [:tbody (for [track tracks]
              ^{:key track} [track-tr track action-button])]])
 
+(defn update-sort-field! [new-field]
+  (if (= new-field (:sort-field @app-state))
+    (swap! app-state update-in [:ascending] not)
+    (swap! app-state assoc :ascending true))
+  (swap! app-state assoc :sort-field new-field))
+
+(defn sort-tracks [tracks]
+  (let [sorted-tracks (sort-by (:sort-field @app-state) tracks)]
+    (if (:ascending @app-state)
+      sorted-tracks
+      (rseq sorted-tracks))))
+
+(defn sort-button [field]
+  [:button.sort
+   {:on-click #(update-sort-field! field)} "⇅"])
+
+(defn sorted-tracks-table [tracks action-button]
+  [:table.tracks
+   [:thead
+    [:tr [:th]
+     [:th "Title" [sort-button :title]]
+     [:th "Artist" [sort-button :artist]]
+     [:th "Album" [sort-button :album]]]]
+   [:tbody (for [track (sort-tracks tracks)]
+             ^{:key track} [track-tr track action-button])]])
+
 (defn playlist-section []
   [:section#playlist
    [:h2 "Playlist"]
@@ -83,7 +109,7 @@
   [:section#library
    [:h2 "Library"]
    [search-form]
-   [tracks-table (@app-state :library) playlist-add-button]])
+   [sorted-tracks-table (@app-state :library) playlist-add-button]])
 
 (defn page-component []
   [:main
