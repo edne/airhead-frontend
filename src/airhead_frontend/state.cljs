@@ -1,4 +1,4 @@
-(ns airhead-cljs.state
+(ns airhead-frontend.state
   (:require [reagent.core :as r]))
 
 (def app-state (r/atom {:info {:name          ""

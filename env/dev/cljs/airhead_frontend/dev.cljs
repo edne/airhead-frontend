@@ -1,5 +1,5 @@
-(ns ^:figwheel-no-load airhead-cljs.dev
-  (:require [airhead-cljs.core :as core]
+(ns ^:figwheel-no-load airhead-frontend.dev
+  (:require [airhead-frontend.core :as core]
             [figwheel.client :as figwheel :include-macros true]))
 
 (enable-console-print!)

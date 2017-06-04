@@ -1,7 +1,7 @@
-(ns airhead-cljs.components
+(ns airhead-frontend.components
   (:require [reagent.core :as r]
-            [airhead-cljs.state :refer [app-state update-state!]]
-            [airhead-cljs.requests :as req]))
+            [airhead-frontend.state :refer [app-state update-state!]]
+            [airhead-frontend.requests :as req]))
 
 (defn header []
   (let [cursor  (r/cursor app-state [:info])

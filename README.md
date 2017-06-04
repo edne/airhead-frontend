@@ -1,7 +1,6 @@
-# airhead-cljs
+# Airhead Frontend
 
-Clojurescript frontend for the [Airhead](https://github.com/turlando/airhead)
-webradio.
+Frontend for the [Airhead](https://github.com/turlando/airhead) webradio.
 
 
 ## Build

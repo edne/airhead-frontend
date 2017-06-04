@@ -1,9 +1,9 @@
-(ns airhead-cljs.requests
+(ns airhead-frontend.requests
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs-http.client :as http]
             [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! chan]]
-            [airhead-cljs.state :refer [app-state update-state!]]
+            [airhead-frontend.state :refer [app-state update-state!]]
             [goog.string :as gstring]
             [goog.string.format]))
 

@@ -1,6 +1,6 @@
-(defproject airhead-cljs "0.1.0-SNAPSHOT"
+(defproject airhead-frontend "0.1.0-SNAPSHOT"
   :description "Airhead clojurescript frontend"
-  :url "https://github.com/edne/airhead-cljs"
+  :url "https://github.com/edne/airhead-frontend"
   :license {:name "2-Clause BSD License"
             :url "https://opensource.org/licenses/BSD-2-Clause"}
 
@@ -30,7 +30,7 @@
   :cljsbuild {:builds {:app
                        {:source-paths ["src" "env/dev/cljs"]
                         :compiler
-                        {:main "airhead-cljs.dev"
+                        {:main "airhead-frontend.dev"
                          :output-to "public/js/app.js"
                          :output-dir "public/js/out"
                          :asset-path   "js/out"

@@ -1,6 +1,6 @@
-(ns airhead-cljs.core
+(ns airhead-frontend.core
   (:require [reagent.core :as r]
-            [airhead-cljs.components :refer [page-component]]))
+            [airhead-frontend.components :refer [page-component]]))
 
 (defn mount-root []
   (r/render [page-component] (.getElementById js/document "app")))
