@@ -11,24 +11,28 @@
      [:h1 title]
      [:p message]]))
 
-(defn now-playing []
-  (let [track (@app-state :now-playing)]
-    [:p#now-playing
-     [:span#note-icon "♫"]
-     (if track
-       (str " " (:artist track) " - " (:title track))
-       [:em "Nothing is playing"])]))
-
 (defn player-section []
   (let [cursor  (r/cursor app-state [:info])
-        url     (@cursor :stream_url)]
+        track   (@app-state :now-playing)
+        url     (@cursor :stream_url)
+        ;; TODO: do not use Id
+        get-audio-tag #(js/document.getElementById "audio-element")]
     [:section#player
      (when url
        [:div
-        [:audio {:controls "controls"}
+        [:audio#audio-element {:controls "controls"
+                               :style {:display "none"}}
          [:source {:src url}]]
-        [:a {:href url} "↗"]])
-     [now-playing]]))
+        (let []
+          [:span#controls
+           ;; TODO: show just one of two
+           [:button {:on-click #(.play (get-audio-tag))}  "⏵"]
+           [:button {:on-click #(.pause (get-audio-tag))} "⏸"]])
+
+        (if track
+          (str (:artist track) " - " (:title track))
+          [:em "Nothing is playing"])
+        [:a {:href url} "↗"]])]))
 
 (defn upload-section []
   [:section#upload

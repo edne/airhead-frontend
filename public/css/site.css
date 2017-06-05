@@ -32,8 +32,6 @@ a:hover {
 }
 
 button {
-    height: 1rem;
-    width: 1rem;
     border: none;
     vertical-align: middle;
     background: none;
@@ -59,22 +57,14 @@ header, section {
 
 /*****************************************************************************/
 
-#player audio {
-    width: 33rem;
+#controls {
+    margin-right: 1rem;
 }
 
 #player a {
+    margin-left: 1rem;
     width: 1.5rem;
     height: 1.5rem;
-    float: right;
-    vertical-align: middle;
-}
-
-#note-icon {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    margin: 0 0.5rem 0 0;
 }
 
 /*****************************************************************************/
