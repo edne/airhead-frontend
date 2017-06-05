@@ -11,6 +11,7 @@
                  [jarohen/chord "0.8.1"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
+            [lein-doo "0.1.6"]
             [lein-figwheel "0.5.10"]]
 
   :min-lein-version "2.5.0"
@@ -39,6 +40,15 @@
                          :pretty-print  true}
                         :figwheel
                         {:open-urls ["http://localhost:3449/index.html"]}}
+
+                       :test
+                       {:source-paths ["src" "test" "env/dev/cljs"]
+                        :compiler {:main airhead-frontend.test-runner
+                                   :output-to  "public/js/test.js"
+                         :source-map true
+                         :optimizations :none
+                         :pretty-print  true}}
+
                        :release
                        {:source-paths ["src" "env/prod/cljs"]
                         :compiler
