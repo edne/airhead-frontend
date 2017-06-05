@@ -14,7 +14,7 @@
 (defn now-playing []
   (let [track (@app-state :now-playing)]
     [:p#now-playing
-     [:span.note-icon "♫"]
+     [:span#note-icon "♫"]
      (if track
        (str " " (:artist track) " - " (:title track))
        [:em "Nothing is playing"])]))
