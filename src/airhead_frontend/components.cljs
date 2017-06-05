@@ -33,10 +33,13 @@
 (defn upload-section []
   [:section#upload
     [:h2 "Upload"]
+
     [:form {:id "upload-form"}
-           [:input {:type "file" :name "track"}]
-           [:input {:type "button" :value "Upload" :on-click req/upload!}]
+           [:label "📂 Choose a file"
+            [:input {:type "file" :name "track" :on-change req/upload!
+                     :style {:display "none"}}]]
            [:progress {:max 100 :value (@app-state :upload-percentage)}]]
+
     [:p (@app-state :upload-status)]])
 
 (defn playlist-add-button [track]
