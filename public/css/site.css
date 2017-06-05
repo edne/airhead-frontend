@@ -1,6 +1,6 @@
 html {
     font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-    font-size: 14pt;
+    font-size: 12pt;
 }
 
 /*****************************************************************************/
@@ -53,12 +53,12 @@ input {
 /*****************************************************************************/
 
 main {
-    max-width: 35rem;
+    max-width: 40rem;
     margin: 2rem auto;
 }
 
 header, section {
-    margin: 1rem 0;
+    margin: 1rem 0 2rem;
 }
 
 /*****************************************************************************/
@@ -123,4 +123,22 @@ th:not(:first-child),
 td:not(:first-child) {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    text-align: left;
+}
+
+#library th {
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+}
+
+#library th:hover {
+    color: #333;
+}
+
+.sorting-arrow {
+    width: 2rem;
+    font-size: 0.7rem;
+    vertical-align: top;
+    text-align: right;
 }

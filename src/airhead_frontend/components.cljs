@@ -92,24 +92,30 @@
       sorted-tracks
       (rseq sorted-tracks))))
 
-(defn sort-button [field]
-  [:button.sort
-   {:on-click #(update-sort-field! field)} "⇅"])
+(defn sorting-th [field caption]
+  [:th {:on-click #(update-sort-field! field)}
+   caption
+   [:span.sorting-arrow (when (= field (@app-state :sort-field))
+                          (if (@app-state :ascending)
+                            " ▲"
+                            " ▼"))]])
 
 (defn sorted-tracks-table [tracks action-button]
   [:table.tracks
    [:thead
     [:tr [:th]
-     [:th "Title" [sort-button :title]]
-     [:th "Artist" [sort-button :artist]]
-     [:th "Album" [sort-button :album]]]]
+     [sorting-th :title "Title"]
+     [sorting-th :artist "Artist"]
+     [sorting-th :album "Album"]]]
    [:tbody (for [track (sort-tracks tracks)]
              ^{:key track} [track-tr track action-button])]])
 
 (defn playlist-section []
   [:section#playlist
    [:h2 "Playlist"]
-   [tracks-table (@app-state :playlist) playlist-remove-button]])
+   (if-let [tracks (not-empty (@app-state :playlist))]
+     [tracks-table tracks playlist-remove-button]
+     "The playlist is empty")])
 
 (defn on-query-change [e]
   ;(get-library!)
