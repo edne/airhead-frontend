@@ -11,28 +11,29 @@
      [:h1 title]
      [:p message]]))
 
-(defn player-section []
-  (let [cursor  (r/cursor app-state [:info])
-        track   (@app-state :now-playing)
-        url     (@cursor :stream_url)
-        ;; TODO: do not use Id
-        get-audio-tag #(js/document.getElementById "audio-element")]
-    [:section#player
-     (when url
-       [:div
-        [:audio#audio-element {:controls "controls"
-                               :style {:display "none"}}
-         [:source {:src url}]]
-        (let []
-          [:span#controls
-           ;; TODO: show just one of two
-           [:button {:on-click #(.play (get-audio-tag))}  "⏵"]
-           [:button {:on-click #(.pause (get-audio-tag))} "⏸"]])
+(defn now-playing []
+  (let [track (@app-state :now-playing)]
+    [:span (if track
+             (str (:artist track) " - " (:title track))
+             [:em "Nothing is playing"])]))
 
-        (if track
-          (str (:artist track) " - " (:title track))
-          [:em "Nothing is playing"])
-        [:a {:href url} "↗"]])]))
+(defn player-section []
+  (let [audio-ref (r/atom nil)]
+    (fn []
+      (when-let [url (get-in @app-state [:info :stream_url])]
+        [:section#player
+
+         [:audio {:ref #(reset! audio-ref %) :style {:display "none"}}
+          [:source {:src url}]]
+
+         [:span#controls
+          (when-let [audio @audio-ref]
+            (if (.-paused audio)
+              [:button {:on-click #(.play audio)}  "⏵"]
+              [:button {:on-click #(.pause audio)} "⏸"]))]
+
+         [now-playing]
+         [:a {:href url} "↗"]]))))
 
 (defn upload-section []
   [:section#upload
