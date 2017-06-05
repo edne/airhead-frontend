@@ -49,12 +49,12 @@
 (defn playlist-add-button [track]
   [:button.add
    {:on-click #(req/playlist-add! (:uuid track))}
-   "+"])
+   "[+]"])
 
 (defn playlist-remove-button [track]
   [:button.remove
    {:on-click #(req/playlist-remove! (:uuid track))}
-   "-"])
+   "[-]"])
 
 (defn track-tr [track action-button]
   [:tr.track
