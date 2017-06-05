@@ -14,7 +14,7 @@
 (defn now-playing []
   (let [track (@app-state :now-playing)]
     [:p#now-playing
-     [:span.note-icon]
+     [:span.note-icon "♫"]
      (if track
        (str " " (:artist track) " - " (:title track))
        [:em "Nothing is playing"])]))
@@ -27,7 +27,7 @@
        [:div
         [:audio {:controls "controls"}
          [:source {:src url}]]
-        [:a {:href url}]])
+        [:a {:href url} "↗"]])
      [now-playing]]))
 
 (defn upload-section []
@@ -41,11 +41,13 @@
 
 (defn playlist-add-button [track]
   [:button.add
-   {:on-click #(req/playlist-add! (:uuid track))}])
+   {:on-click #(req/playlist-add! (:uuid track))}
+   "+"])
 
 (defn playlist-remove-button [track]
   [:button.remove
-   {:on-click #(req/playlist-remove! (:uuid track))}])
+   {:on-click #(req/playlist-remove! (:uuid track))}
+   "-"])
 
 (defn track-tr [track action-button]
   [:tr.track
