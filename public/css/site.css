@@ -75,16 +75,9 @@ header, section {
 
 /*****************************************************************************/
 
-#upload form {
-    display: flex;
-    align-items: center;
-}
-
 #upload label {
-    flex: 1;
     height: 1rem;
     width: 1rem;
-    vertical-align: middle;
     background: none;
     cursor: pointer;
     color: #000;
@@ -95,7 +88,11 @@ header, section {
 }
 
 #upload progress {
-    flex-grow: 2;
+    display: block;
+    margin: 0.5rem 0 0.5rem 0;
+    width: 100%;
+    height: 0.5rem;
+    border: none;
 }
 
 /*****************************************************************************/

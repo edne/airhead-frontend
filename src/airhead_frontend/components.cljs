@@ -35,17 +35,26 @@
          [now-playing]
          [:a {:href url} "↗"]]))))
 
+(defn progress-bar []
+  (let [percentage (@app-state :upload-percentage)]
+    (if (< 0 percentage 100)
+      [:progress {:max 100 :value percentage}])))
+
 (defn upload-section []
-  [:section#upload
-    [:h2 "Upload"]
+  (let [form-ref (r/atom nil)]
+    (fn []
+      [:section#upload
+       [:h2 "Upload"]
 
-    [:form {:id "upload-form"}
-           [:label "📂 Choose a file"
-            [:input {:type "file" :name "track" :on-change req/upload!
-                     :style {:display "none"}}]]
-           [:progress {:max 100 :value (@app-state :upload-percentage)}]]
+       [:form {:ref #(reset! form-ref %)}
+        [:label "📂 Choose a file"
+         [:input {:type "file" :name "track"
+                  :on-change #(when-let [form @form-ref]
+                                (req/upload! form))
+                  :style {:display "none"}}]]
+        [progress-bar]]
 
-    [:p (@app-state :upload-status)]])
+       [:p (@app-state :upload-status)]])))
 
 (defn playlist-add-button [track]
   [:button.add

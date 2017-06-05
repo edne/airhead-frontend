@@ -30,10 +30,8 @@
                                    {:query-params {"q" (@app-state :query)}}))]
         (update-state! :library (get-in response [:body :tracks])))))
 
-(defn upload! []
-  ;; TODO: do not use element id
-  (let [form (.getElementById js/document "upload-form")
-        progress-chan (chan)
+(defn upload! [form]
+  (let [progress-chan (chan)
         http-chan (http/post "/api/library" {:body (js/FormData. form)
                                              :progress progress-chan})]
     (go-loop []
