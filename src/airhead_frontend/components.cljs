@@ -3,6 +3,9 @@
             [airhead-frontend.state :refer [app-state update-state!]]
             [airhead-frontend.requests :as req]))
 
+;; -------------------------
+;; Header
+
 (defn header []
   (let [cursor  (r/cursor app-state [:info])
         title   (@cursor :name)
@@ -10,6 +13,9 @@
     [:header
      [:h1 title]
      [:p message]]))
+
+;; -------------------------
+;; Player
 
 (defn now-playing []
   (let [track (@app-state :now-playing)]
@@ -35,6 +41,9 @@
          [now-playing]
          [:a {:href url} "↗"]]))))
 
+;; -------------------------
+;; Upload
+
 (defn progress-bar []
   (let [percentage (@app-state :upload-percentage)]
     (if (< 0 percentage 100)
@@ -56,6 +65,9 @@
 
        [:p (@app-state :upload-status)]])))
 
+;; -------------------------
+;; Tracks
+
 (defn playlist-add-button [track]
   [:button.add
    {:on-click #(req/playlist-add! (:uuid track))}
@@ -73,12 +85,38 @@
       [action-button track])]
    [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
 
-(defn tracks-table [tracks action-button]
-  [:table.tracks
-   [:thead
-    [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
-   [:tbody (for [track tracks]
-             ^{:key track} [track-tr track action-button])]])
+;; -------------------------
+;; Playlist
+
+(defn playlist-section []
+  [:section#playlist
+   [:h2 "Playlist"]
+   (if-let [tracks (not-empty (@app-state :playlist))]
+     [:table.tracks
+      [:thead
+       [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
+      [:tbody (for [track tracks]
+                ^{:key track} [track-tr track playlist-remove-button])]]
+     "The playlist is empty")])
+
+;; -------------------------
+;; Search
+
+(defn on-query-change [e]
+  (update-state! :query (-> e .-target .-value))
+  (req/get-library!))
+
+(defn search-form []
+  [:section#search
+   [:form
+    [:label {:for "query"} "Search:"]
+    [:input {:type "text"
+             :id "query"
+             :value (@app-state :query)
+             :on-change on-query-change}]]])
+
+;; -------------------------
+;; Library
 
 (defn update-sort-field! [new-field]
   (if (= new-field (:sort-field @app-state))
@@ -100,41 +138,22 @@
                             " ▲"
                             " ▼"))]])
 
-(defn sorted-tracks-table [tracks action-button]
-  [:table.tracks
-   [:thead
-    [:tr [:th]
-     [sorting-th :title "Title"]
-     [sorting-th :artist "Artist"]
-     [sorting-th :album "Album"]]]
-   [:tbody (for [track (sort-tracks tracks)]
-             ^{:key track} [track-tr track action-button])]])
-
-(defn playlist-section []
-  [:section#playlist
-   [:h2 "Playlist"]
-   (if-let [tracks (not-empty (@app-state :playlist))]
-     [tracks-table tracks playlist-remove-button]
-     "The playlist is empty")])
-
-(defn on-query-change [e]
-  ;(get-library!)
-  (update-state! :query (-> e .-target .-value)))
-
-(defn search-form []
-  [:section#search
-   [:form
-    [:label {:for "query"} "Search:"]
-    [:input {:type "text"
-             :id "query"
-             :value (@app-state :query)
-             :on-change on-query-change}]]])
-
 (defn library-section []
-  [:section#library
-   [:h2 "Library"]
-   [search-form]
-   [sorted-tracks-table (@app-state :library) playlist-add-button]])
+  (let [tracks (@app-state :library)]
+    [:section#library
+     [:h2 "Library"]
+     [search-form]
+     [:table.tracks
+      [:thead
+       [:tr [:th]
+        [sorting-th :title "Title"]
+        [sorting-th :artist "Artist"]
+        [sorting-th :album "Album"]]]
+      [:tbody (for [track (sort-tracks tracks)]
+                ^{:key track} [track-tr track playlist-add-button])]]]))
+
+;; -------------------------
+;; Main
 
 (defn page-component []
   [:main
