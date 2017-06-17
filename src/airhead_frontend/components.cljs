@@ -140,7 +140,7 @@
 
 (defn library-section []
   (let [tracks (@app-state :library)]
-    [:section#library
+    [:section#library.pure-u-1-2
      [:h2 "Library"]
      [search-form]
      [:table.tracks
@@ -156,9 +156,10 @@
 ;; Main
 
 (defn page-component []
-  [:main
-   [header]
-   [player-section]
-   [upload-section]
-   [playlist-section]
+ [:main
+   [:div.pure-u-1-2
+     [header]
+     [player-section]
+     [upload-section]
+     [playlist-section]]
    [library-section]])
