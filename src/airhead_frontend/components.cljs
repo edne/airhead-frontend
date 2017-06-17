@@ -35,8 +35,8 @@
          [:span#controls
           (when-let [audio @audio-ref]
             (if (.-paused audio)
-              [:button {:on-click #(.play audio)}  "⏵"]
-              [:button {:on-click #(.pause audio)} "⏸"]))]
+              [:button {:on-click #(.play audio)}  "play"]
+              [:button {:on-click #(.pause audio)} "pause"]))]
 
          [now-playing]
          [:a {:href url} "↗"]]))))
@@ -56,7 +56,7 @@
        [:h2 "Upload"]
 
        [:form {:ref #(reset! form-ref %)}
-        [:label "📂 Choose a file"
+        [:label "choose a file"
          [:input {:type "file" :name "track"
                   :on-change #(when-let [form @form-ref]
                                 (req/upload! form))
@@ -71,12 +71,12 @@
 (defn playlist-add-button [track]
   [:button.add
    {:on-click #(req/playlist-add! (:uuid track))}
-   "[+]"])
+   "+"])
 
 (defn playlist-remove-button [track]
   [:button.remove
    {:on-click #(req/playlist-remove! (:uuid track))}
-   "[-]"])
+   "-"])
 
 (defn track-tr [track action-button]
   [:tr.track

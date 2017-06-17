@@ -32,7 +32,8 @@ a:hover {
 }
 
 button {
-    border: none;
+    border: 1px solid #bbb;
+    padding: 0.2rem 1rem;
     vertical-align: middle;
     background: none;
     cursor: pointer;
@@ -76,9 +77,11 @@ header, section {
 /*****************************************************************************/
 
 #upload label {
+    padding: 0.2rem 1rem;
     height: 1rem;
     width: 1rem;
     background: none;
+    border: 1px solid #bbb;
     cursor: pointer;
     color: #000;
 }
