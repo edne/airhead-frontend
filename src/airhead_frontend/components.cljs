@@ -56,7 +56,7 @@
        [:h2 "Upload"]
 
        [:form {:ref #(reset! form-ref %)}
-        [:label "choose a file"
+        [:label "upload a file"
          [:input {:type "file" :name "track"
                   :on-change #(when-let [form @form-ref]
                                 (req/upload! form))
