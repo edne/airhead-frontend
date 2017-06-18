@@ -143,7 +143,7 @@
       [:form#library-search.pure-form
         [:input.pure-input-3-4 {:type "text"
                                :id "query"
-                               :placeholder "Search trough the library..."
+                               :placeholder "Search through the library..."
                                :value (@app-state :query)
                                :on-change on-query-change}]
         [:span.pure-input-1-4 (str "Tracks: " (count tracks))]]
