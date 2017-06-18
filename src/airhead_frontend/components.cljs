@@ -8,11 +8,11 @@
 
 (defn header []
   (let [cursor  (r/cursor app-state [:info])
-        title   (@cursor :name)
-        message (@cursor :greet_message)]
+                title   (@cursor :name)
+                message (@cursor :greet_message)]
     [:header
-     [:h1 title]
-     [:p message]]))
+      [:h1 title]
+      [:p message]]))
 
 ;; -------------------------
 ;; Player
@@ -62,16 +62,17 @@
   (let [form-ref (r/atom nil)]
     (fn []
       [:section#upload
-       [:h2 "Upload"]
+        [:h2 "Upload"]
 
-       [:form.pure-form {:ref #(reset! form-ref %)}
-         [:input.pure-input-3-4 {:type "file" :name "track"}]
-         [:input.pure-button..pure-button-primary.pure-input-1-4
-           {:type "button" :value "Upload"
+        [:form.pure-form
+          {:ref #(reset! form-ref %)}
+          [:input.pure-input-3-4 {:type "file" :name "track"}]
+          [:input.pure-button.pure-button-primary.pure-input-1-4
+            {:type "button" :value "Upload"
             :on-click #(when-let [form @form-ref] (req/upload! form))}]
-         [progress-bar]]
+          [progress-bar]]
 
-       [:p (@app-state :upload-status)]])))
+        [:p (@app-state :upload-status)]])))
 
 ;; -------------------------
 ;; Tracks
@@ -86,24 +87,24 @@
 
 (defn track-tr [track action-button]
   [:tr.track
-   [:td
-    (when action-button
-      [action-button track])]
-   [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
+    [:td
+      (when action-button
+        [action-button track])]
+    [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
 
 ;; -------------------------
 ;; Playlist
 
 (defn playlist-section []
   [:section#playlist
-   [:h2 "Playlist"]
-   (if-let [tracks (not-empty (@app-state :playlist))]
-     [:table.pure-table.pure-table-striped
-      [:thead
-       [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
-      [:tbody (for [track tracks]
-                ^{:key track} [track-tr track playlist-remove-button])]]
-     "The playlist is empty.")])
+    [:h2 "Playlist"]
+    (if-let [tracks (not-empty (@app-state :playlist))]
+      [:table.pure-table.pure-table-striped
+        [:thead
+          [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
+        [:tbody (for [track tracks]
+                  ^{:key track} [track-tr track playlist-remove-button])]]
+      "The playlist is empty.")])
 
 ;; -------------------------
 ;; Search
@@ -129,11 +130,11 @@
 
 (defn sorting-th [field caption]
   [:th {:on-click #(update-sort-field! field)}
-   caption
-   [:span.sorting-arrow (when (= field (@app-state :sort-field))
-                          (if (@app-state :ascending)
-                            " ▲"
-                            " ▼"))]])
+       caption
+       [:span.sorting-arrow (when (= field (@app-state :sort-field))
+                              (if (@app-state :ascending)
+                                " ▲"
+                                " ▼"))]])
 
 (defn library-section []
   (let [tracks (@app-state :library)]
@@ -141,10 +142,10 @@
       [:h2 "Library"]
       [:form#library-search.pure-form
         [:input.pure-input-3-4 {:type "text"
-                           :id "query"
-                           :placeholder "Search trough the library..."
-                           :value (@app-state :query)
-                           :on-change on-query-change}]
+                               :id "query"
+                               :placeholder "Search trough the library..."
+                               :value (@app-state :query)
+                               :on-change on-query-change}]
         [:span.pure-input-1-4 (str "Tracks: " (count tracks))]]
       [:table.pure-table.pure-table-striped
         [:thead
@@ -159,11 +160,11 @@
 ;; Main
 
 (defn page-component []
- [:main.pure-g
-   [:div.pure-u-1.pure-u-md-1-2
-     [header]
-     [player-section]
-     [upload-section]
-     [playlist-section]]
-   [:div.pure-u-1.pure-u-md-1-2
-     [library-section]]])
+  [:main.pure-g
+    [:div.pure-u-1.pure-u-md-1-2
+      [header]
+      [player-section]
+      [upload-section]
+      [playlist-section]]
+    [:div.pure-u-1.pure-u-md-1-2
+      [library-section]]])
