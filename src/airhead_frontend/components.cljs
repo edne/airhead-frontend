@@ -30,12 +30,11 @@
     (fn []
       (when-let [url (get-in @app-state [:info :stream_url])]
         [:section#player
-
           [:audio {:ref #(reset! audio-ref %)}
                   [:source {:src url}]]
 
-          [:div#player-controls.pure-button-group {:role "group"}
-
+          [:div#player-controls.pure-button-group
+            {:role "group"}
             (when-let [audio @audio-ref]
               (if (.-paused audio)
                 [:button.pure-button.pure-button-primary
@@ -45,7 +44,7 @@
                   {:on-click #(.pause audio)}
                   [:i.fa.fa-pause] "Pause"]))
 
-            [:a.pure-button {:href url}
+            [:a.pure-button {:href url :target "_blank"}
                             [:i.fa.fa-external-link]
                             "Open stream"]]
 
