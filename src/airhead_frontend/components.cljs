@@ -99,7 +99,7 @@
   [:section#playlist
    [:h2 "Playlist"]
    (if-let [tracks (not-empty (@app-state :playlist))]
-     [:table.pure-table
+     [:table.pure-table.pure-table-striped
       [:thead
        [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
       [:tbody (for [track tracks]
