@@ -24,9 +24,9 @@ main > div {
  *  BUTTONS WITH LABELS AND ICONS                                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-.pure-button > i.fa,
-p > i.fa {
-    margin-right: 0.5rem;
+.pure-button > span,
+i.fa + span  {
+    margin-left: 0.5rem;
 }
 
 
