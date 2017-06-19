@@ -141,12 +141,12 @@
     [:section#library
       [:h2 "Library"]
       [:form#library-search.pure-form
-        [:input.pure-input-3-4 {:type "text"
-                               :id "query"
-                               :placeholder "Search through the library..."
-                               :value (@app-state :query)
-                               :on-change on-query-change}]
-        [:span.pure-input-1-4 (str "Tracks: " (count tracks))]]
+        [:input {:type "text"
+                :id "query"
+                :placeholder "Search through the library..."
+                :value (@app-state :query)
+                :on-change on-query-change}]
+        [:span (str "Tracks: " (count tracks))]]
       [:table.pure-table.pure-table-striped
         [:thead
           [:tr [:th]
