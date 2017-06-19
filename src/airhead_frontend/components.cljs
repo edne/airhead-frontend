@@ -35,18 +35,31 @@
 
          [:div#player-controls.pure-button-group
           {:role "group"}
+
           (when-let [audio @audio-ref]
             (if (.-paused audio)
               [:button.pure-button.pure-button-primary
                {:on-click #(.play audio)}
-               [:i.fa.fa-play] "Play"]
+               [:i.fa.fa-play]
+               [:span "Play"]]
               [:button.pure-button.pure-button-primary.pure-button-active
                {:on-click #(.pause audio)}
-               [:i.fa.fa-pause] "Pause"]))
+               [:i.fa.fa-pause]
+               [:span "Pause"]]))
+
+          (when-let [audio @audio-ref]
+            (if (.-muted audio)
+              [:button.pure-button.pure-button-active
+               {:on-click (fn [] (set! (.-muted audio) false))}
+               [:i.fa.fa-volume-off]]
+              [:button.pure-button
+               {:on-click (fn [] (set! (.-muted audio) true))}
+               [:i.fa.fa-volume-up]]))
+
 
           [:a.pure-button {:href url :target "_blank"}
            [:i.fa.fa-external-link]
-           "Open stream"]]
+           [:span "Open stream"]]]
 
          [now-playing]]))))
 
