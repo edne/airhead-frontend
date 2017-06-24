@@ -95,7 +95,8 @@
           :on-click #(when-let [form @form-ref] (req/upload! form))}]
         [progress-bar]]
 
-       [:p (@app-state :upload-status)]])))
+       (when-let [status (@app-state :upload-status)]
+         [:p status])])))
 
 ;; -------------------------
 ;; Tracks

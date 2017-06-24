@@ -14,7 +14,7 @@
 
                         ;; TODO :upload branch
                         :upload-percentage 0
-                        :upload-status "Ready to upload."}))
+                        :upload-status nil}))
 
 (defn update-state! [k v]
   (swap! app-state assoc k v))
