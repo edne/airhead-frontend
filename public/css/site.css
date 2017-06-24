@@ -57,11 +57,9 @@ i.fa + span  {
     margin-left: 0.5rem;
 }
 
-
 .track-action {
-    padding: 0.1rem 0.4rem 0.1rem 0.4rem;
+    padding: 0.3rem 0.6rem;
     font-weight: bold;
-    font-size: 0.8rem;
 }
 
 tr td:first-child {
