@@ -152,7 +152,7 @@
       (rseq sorted-tracks))))
 
 (defn sorting-th [field caption]
-  [:th {:on-click #(update-sort-field! field)}
+  [:th.sorting-th {:on-click #(update-sort-field! field)}
    caption
    [:span.sorting-arrow (when (= field (@app-state :sort-field))
                           (if (@app-state :ascending)

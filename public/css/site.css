@@ -77,6 +77,16 @@ section#upload > form > progress {
  *  LIBRARY SECTION                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+.sorting-th {
+    cursor: pointer;
+}
+
+.sorting-arrow {
+    font-size: 0.8rem;
+    vertical-align: top;
+    padding-top: 0.2rem;
+}
+
 form#library-search {
     display: flex;
     margin-bottom: 0.5rem;
