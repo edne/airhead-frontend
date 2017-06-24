@@ -12,6 +12,15 @@ main {
     margin: 0.5rem auto;
 }
 
+/* 48rem in pure-css applies to ≥ 768px window size.
+ * See https://purecss.io/grids/ "Default media queries" section
+ */
+@media screen and (min-width: 48rem) {
+    main {
+        width: 48rem;
+    }
+}
+
 header, section {
     padding: 0.5rem;
 }
