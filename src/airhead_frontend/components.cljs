@@ -25,6 +25,28 @@
               (str (:artist track) " - " (:title track))
               [:em "Nothing is playing."])]]))
 
+(defn pause-button [audio]
+  [:button.pure-button.pure-button-active
+   {:on-click #(.pause audio)}
+   [:i.fa.fa-pause]
+   [:span "Pause"]])
+
+(defn play-button [audio]
+  [:button.pure-button
+   {:on-click #(.play audio)}
+   [:i.fa.fa-play]
+   [:span "Play"]])
+
+(defn audio-on-button [audio]
+  [:button.pure-button
+   {:on-click #(set! (.-muted audio) true)}
+   [:i.fa.fa-volume-up]])
+
+(defn audio-off-button [audio]
+  [:button.pure-button.pure-button-active
+   {:on-click #(set! (.-muted audio) false)}
+   [:i.fa.fa-volume-off]])
+
 (defn player-section []
   (let [audio-ref (r/atom nil)]
     (fn []
@@ -33,33 +55,21 @@
          [:audio {:ref #(reset! audio-ref %)}
           [:source {:src url}]]
 
-         [:div#player-controls.pure-button-group
-          {:role "group"}
+         (when-let [audio @audio-ref]
+           [:div#player-controls.pure-button-group
+            {:role "group"}
 
-          (when-let [audio @audio-ref]
             (if (.-paused audio)
-              [:button.pure-button
-               {:on-click #(.play audio)}
-               [:i.fa.fa-play]
-               [:span "Play"]]
-              [:button.pure-button.pure-button-active
-               {:on-click #(.pause audio)}
-               [:i.fa.fa-pause]
-               [:span "Pause"]]))
+              [play-button audio]
+              [pause-button audio])
 
-          (when-let [audio @audio-ref]
             (if (.-muted audio)
-              [:button.pure-button.pure-button-active
-               {:on-click #(set! (.-muted audio) false)}
-               [:i.fa.fa-volume-off]]
-              [:button.pure-button
-               {:on-click #(set! (.-muted audio) true)}
-               [:i.fa.fa-volume-up]]))
+              [audio-off-button audio]
+              [audio-on-button audio])
 
-
-          [:a.pure-button {:href url :target "_blank"}
-           [:i.fa.fa-external-link]
-           [:span "Open stream"]]]
+            [:a.pure-button {:href url :target "_blank"}
+             [:i.fa.fa-external-link]
+             [:span "Open stream"]]])
 
          [now-playing]]))))
 
