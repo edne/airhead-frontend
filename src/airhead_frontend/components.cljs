@@ -93,12 +93,12 @@
 (defn playlist-add-button [track]
   [:button.pure-button.track-action
    {:on-click #(req/playlist-add! (:uuid track))}
-   [:i.fa.fa-plus-square]])
+   [:i.fa.fa-plus]])
 
 (defn playlist-remove-button [track]
   [:button.pure-button.track-action
    {:on-click #(req/playlist-remove! (:uuid track))}
-   [:i.fa.fa-minus-square]])
+   [:i.fa.fa-minus]])
 
 (defn track-tr [track action-button]
   [:tr.track
