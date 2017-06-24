@@ -28,6 +28,12 @@ header, section {
 }
 
 
+header {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  TABLES                                                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
