@@ -8,7 +8,8 @@ html {
 
 main {
     width: 100%;
-    margin: 0.5rem auto;
+    margin: 1rem 0;
+    padding: 0 0.5rem;
 }
 
 /* 48rem in pure-css applies to ≥ 768px window size.
@@ -17,7 +18,13 @@ main {
 @media screen and (min-width: 48rem) {
     main {
         width: 48rem;
+        margin: 1rem auto;
+        padding: 0;
     }
+}
+
+header, section {
+    width: 100%;
 }
 
 
