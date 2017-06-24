@@ -42,7 +42,7 @@
                {:on-click #(.play audio)}
                [:i.fa.fa-play]
                [:span "Play"]]
-              [:button.pure-button
+              [:button.pure-button.pure-button-active
                {:on-click #(.pause audio)}
                [:i.fa.fa-pause]
                [:span "Pause"]]))
