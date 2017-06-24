@@ -21,6 +21,9 @@ main {
 /* Columns */
 main > div {
     box-sizing: border-box;
+}
+
+header, section {
     padding: 0.5rem;
 }
 
