@@ -105,6 +105,15 @@
       [action-button track])]
    [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
 
+
+;; -------------------------
+;; Tables
+
+(defn table [head content]
+  [:table.pure-table.pure-table-horizontal
+   [:thead head]
+   [:tbody content]])
+
 ;; -------------------------
 ;; Playlist
 
@@ -112,11 +121,10 @@
   [:section#playlist
    [:h2 "Playlist"]
    (if-let [tracks (not-empty (@app-state :playlist))]
-     [:table.pure-table.pure-table-striped
-      [:thead
-       [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]]
-      [:tbody (for [track tracks]
-                ^{:key track} [track-tr track playlist-remove-button])]]
+     [table
+      [:tr [:th] [:th  "Title"] [:th "Artist"] [:th "Album"]]
+      (for [track tracks]
+        ^{:key track} [track-tr track playlist-remove-button])]
      "The playlist is empty.")])
 
 ;; -------------------------
@@ -160,14 +168,13 @@
                :value (@app-state :query)
                :on-change on-query-change}]
       [:span (str "Tracks: " (count tracks))]]
-     [:table.pure-table.pure-table-striped
-      [:thead
-       [:tr [:th]
-        [sorting-th :title "Title"]
-        [sorting-th :artist "Artist"]
-        [sorting-th :album "Album"]]]
-      [:tbody (for [track (sort-tracks tracks)]
-                ^{:key track} [track-tr track playlist-add-button])]]]))
+     [table
+      [:tr [:th]
+       [sorting-th :title "Title"]
+       [sorting-th :artist "Artist"]
+       [sorting-th :album "Album"]]
+      (for [track (sort-tracks tracks)]
+        ^{:key track} [track-tr track playlist-add-button])]]))
 
 ;; -------------------------
 ;; Main
