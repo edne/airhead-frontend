@@ -4,12 +4,12 @@
 
 html {
     font-family: 'Exo 2', sans-serif;
-    font-size: 1rem;
 }
 
 main {
     width: 100%;
-    margin: 0.5rem auto;
+    margin: 1rem 0;
+    padding: 0 0.5rem;
 }
 
 /* 48rem in pure-css applies to ≥ 768px window size.
@@ -18,14 +18,12 @@ main {
 @media screen and (min-width: 48rem) {
     main {
         width: 48rem;
+        margin: 1rem auto;
+        padding: 0;
     }
 }
 
 header, section {
-    padding: 0.5rem;
-}
-
-table {
     width: 100%;
 }
 
@@ -33,6 +31,10 @@ table {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  TABLES                                                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+table {
+    width: 100%;
+}
 
 th {
     white-space: nowrap;
@@ -61,11 +63,9 @@ i.fa + span  {
     margin-left: 0.5rem;
 }
 
-
 .track-action {
-    padding: 0.1rem 0.4rem 0.1rem 0.4rem;
+    padding: 0.3rem 0.6rem;
     font-weight: bold;
-    font-size: 0.8rem;
 }
 
 tr td:first-child {
