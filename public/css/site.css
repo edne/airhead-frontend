@@ -12,9 +12,12 @@ main {
     margin: 0.5rem auto;
 }
 
-@media screen and (min-width: 40rem) {
+/* 48rem in pure-css applies to ≥ 768px window size.
+ * See https://purecss.io/grids/ "Default media queries" section
+ */
+@media screen and (min-width: 48rem) {
     main {
-        width: 40rem;
+        width: 48rem;
     }
 }
 
@@ -26,8 +29,26 @@ table {
     width: 100%;
 }
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+ *  TABLES                                                                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 th {
     white-space: nowrap;
+}
+
+th.sorting-th {
+    cursor: pointer;
+}
+
+th.sorting-th > span {
+    vertical-align: middle;
+}
+
+th.sorting-th > span.sorting-th-arrow {
+    padding-left: 0.3rem;
+    font-size: 0.8rem;
 }
 
 
@@ -76,16 +97,6 @@ section#upload > form > progress {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  LIBRARY SECTION                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-.sorting-th {
-    cursor: pointer;
-}
-
-.sorting-arrow {
-    font-size: 0.8rem;
-    vertical-align: top;
-    padding-top: 0.2rem;
-}
 
 form#library-search {
     display: flex;
