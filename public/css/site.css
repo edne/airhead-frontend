@@ -21,18 +21,14 @@ main {
     }
 }
 
-header, section {
-    padding: 0.5rem;
-}
-
-table {
-    width: 100%;
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  TABLES                                                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+table {
+    width: 100%;
+}
 
 th {
     white-space: nowrap;
