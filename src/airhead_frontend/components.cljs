@@ -38,11 +38,11 @@
 
           (when-let [audio @audio-ref]
             (if (.-paused audio)
-              [:button.pure-button.pure-button-primary
+              [:button.pure-button
                {:on-click #(.play audio)}
                [:i.fa.fa-play]
                [:span "Play"]]
-              [:button.pure-button.pure-button-primary.pure-button-active
+              [:button.pure-button
                {:on-click #(.pause audio)}
                [:i.fa.fa-pause]
                [:span "Pause"]]))
@@ -50,10 +50,10 @@
           (when-let [audio @audio-ref]
             (if (.-muted audio)
               [:button.pure-button.pure-button-active
-               {:on-click (fn [] (set! (.-muted audio) false))}
+               {:on-click #(set! (.-muted audio) false)}
                [:i.fa.fa-volume-off]]
               [:button.pure-button
-               {:on-click (fn [] (set! (.-muted audio) true))}
+               {:on-click #(set! (.-muted audio) true)}
                [:i.fa.fa-volume-up]]))
 
 
@@ -79,8 +79,8 @@
 
        [:form.pure-form
         {:ref #(reset! form-ref %)}
-        [:input.pure-input-3-4 {:type "file" :name "track"}]
-        [:input.pure-button.pure-button-primary.pure-input-1-4
+        [:input.pure-input-2-3 {:type "file" :name "track"}]
+        [:input.pure-button.pure-input-1-3
          {:type "button" :value "Upload"
           :on-click #(when-let [form @form-ref] (req/upload! form))}]
         [progress-bar]]
