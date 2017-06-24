@@ -77,14 +77,17 @@ section#upload > form > progress {
  *  LIBRARY SECTION                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-.sorting-th {
+th.sorting-th {
     cursor: pointer;
 }
 
-.sorting-arrow {
+th.sorting-th > span {
+    vertical-align: middle;
+}
+
+th.sorting-th > span.sorting-th-arrow {
+    padding-left: 0.3rem;
     font-size: 0.8rem;
-    vertical-align: top;
-    padding-top: 0.2rem;
 }
 
 form#library-search {

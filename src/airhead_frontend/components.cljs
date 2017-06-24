@@ -153,11 +153,11 @@
 
 (defn sorting-th [field caption]
   [:th.sorting-th {:on-click #(update-sort-field! field)}
-   caption
-   [:span.sorting-arrow (when (= field (@app-state :sort-field))
+   [:span caption]
+   [:span.sorting-th-arrow (when (= field (@app-state :sort-field))
                           (if (@app-state :ascending)
-                            " ▲"
-                            " ▼"))]])
+                            "▲"
+                            "▼"))]])
 
 (defn library-section []
   (let [tracks (@app-state :library)]
