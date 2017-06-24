@@ -166,8 +166,7 @@
                :id "query"
                :placeholder "Search through the library..."
                :value (@app-state :query)
-               :on-change on-query-change}]
-      [:span (str "Tracks: " (count tracks))]]
+               :on-change on-query-change}]]
      [table
       [:tr [:th]
        [sorting-th :title "Title"]
@@ -184,7 +183,5 @@
    [header]
    [player-section]
    [upload-section]
-   [:div.pure-u-1.pure-u-md-1-2
-    [playlist-section]]
-   [:div.pure-u-1.pure-u-md-1-2
-    [library-section]]])
+   [playlist-section]
+   [library-section]])

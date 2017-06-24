@@ -12,19 +12,18 @@ main {
     margin: 0.5rem auto;
 }
 
-@media screen and (min-width: 48em) {
+@media screen and (min-width: 40rem) {
     main {
-        width: 90%;
+        width: 40rem;
     }
-}
-
-/* Columns */
-main > div {
-    box-sizing: border-box;
 }
 
 header, section {
     padding: 0.5rem;
+}
+
+table {
+    width: 100%;
 }
 
 
@@ -72,11 +71,5 @@ form#library-search {
 }
 
 form#library-search > input {
-    min-width: 100%;
-}
-
-@media screen and (min-width: 48em) {
-    form#library-search > input {
-        min-width: 85%;
-    }
+    width: 100%;
 }
