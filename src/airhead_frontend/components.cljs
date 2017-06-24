@@ -91,12 +91,14 @@
 ;; Tracks
 
 (defn playlist-add-button [track]
-  [:i.fa.fa-plus-square
-   {:on-click #(req/playlist-add! (:uuid track))}])
+  [:button.pure-button.track-action
+   {:on-click #(req/playlist-add! (:uuid track))}
+   "+"])
 
 (defn playlist-remove-button [track]
-  [:i.fa.fa-minus-square
-   {:on-click #(req/playlist-remove! (:uuid track))}])
+  [:button.pure-button.track-action
+   {:on-click #(req/playlist-remove! (:uuid track))}
+   "-"])
 
 (defn track-tr [track action-button]
   [:tr.track

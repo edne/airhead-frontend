@@ -41,6 +41,17 @@ i.fa + span  {
 }
 
 
+.track-action {
+    padding: 0.1rem 0.4rem 0.1rem 0.4rem;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+tr td:first-child {
+    padding-right: 0rem;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  PLAYER SECTION                                                           *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
