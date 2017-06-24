@@ -173,11 +173,11 @@
 ;; Main
 
 (defn page-component []
-  [:main.pure-g
+  [:main
+   [header]
+   [player-section]
+   [upload-section]
    [:div.pure-u-1.pure-u-md-1-2
-    [header]
-    [player-section]
-    [upload-section]
     [playlist-section]]
    [:div.pure-u-1.pure-u-md-1-2
     [library-section]]])
