@@ -28,7 +28,7 @@
                                    {:query-params {"q" (@app-state :query)}}))]
         (update-state! :library (get-in response [:body :tracks])))))
 
-(defn upload! [form]
+(defn upload! [form state]
   (let [progress-chan (chan)
         http-chan (http/post "/api/library" {:body (js/FormData. form)
                                              :progress progress-chan})]
@@ -40,12 +40,11 @@
                        percentage (-> loaded (/ total) (* 100))
                        status     (gstring/format "Uploading: %.0f%"
                                                   percentage)]
-                   (update-state! :upload-percentage percentage)
-                   (update-state! :upload-status status)))
+                   (swap! state assoc :percentage percentage)))
                (recur)))
     (go (let [response (<! http-chan)]
           ;; TODO: check response, and take transcoding status from a websocket
-          (update-state! :upload-response response)))))
+          (swap! state assoc :response response)))))
 
 (defn get-updates! []
   (get-info!)

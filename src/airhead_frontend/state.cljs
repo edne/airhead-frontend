@@ -9,11 +9,10 @@
                         :now-playing nil
 
                         :library []
-                        :sort-field :title
-                        :ascending true
 
-                        :upload-percentage 0
-                        :upload-response nil}))
+                        ; TODO: move this inside the component
+                        :sort-field :title
+                        :ascending true}))
 
 (defn update-state! [k v]
   (swap! app-state assoc k v))

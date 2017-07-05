@@ -84,15 +84,13 @@
 ;; -------------------------
 ;; Upload
 
-(defn progress-bar []
-  (let [percentage (@app-state :upload-percentage)]
-    (if (< 0 percentage 100)
-      [:progress.pure-input-1 {:max 100 :value percentage}])))
-
 (defn upload-section []
   (let [form-ref         (r/atom nil)
         file-input-ref   (r/atom nil)
-        upload-input-ref (r/atom nil)]
+        upload-input-ref (r/atom nil)
+
+        state (r/atom {:response nil
+                       :percentage 0})]
     (fn []
       [:section#upload
        [:h2 "Upload"]
@@ -104,7 +102,7 @@
         [:input {:type "button"
                  :ref #(reset! upload-input-ref %)
                  :on-click #(when-let [form @form-ref]
-                              (req/upload! form))}]]
+                              (req/upload! form state))}]]
 
        [:div.controller-box
         [:div.pure-button-group
@@ -128,9 +126,11 @@
                      (-> path (split "\\") last)  ; C:\fakepath\file-name
                      "No file selected.")))]]]
 
-       [progress-bar]
+       (let [percentage (@state :percentage)]
+         (if (< 0 percentage 100)
+           [:progress.pure-input-1 {:max 100 :value percentage}]))
 
-       (when-let [response (@app-state :upload-response)]
+       (when-let [response (@state :response)]
          (let [{status :status
                 {error-msg :msg
                  track     :track} :body} response]
