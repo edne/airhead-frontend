@@ -1,5 +1,6 @@
 (ns airhead-frontend.components
-  (:require [reagent.core :as r]
+  (:require [clojure.string :refer [blank? split]]
+            [reagent.core :as r]
             [airhead-frontend.state :refer [app-state update-state!]]
             [airhead-frontend.requests :as req]))
 
@@ -16,14 +17,6 @@
 
 ;; -------------------------
 ;; Player
-
-(defn now-playing []
-  (let [track (@app-state :now-playing)]
-    [:p#player-track
-     [:i.fa.fa-music]
-     [:span (if track
-              (str (:artist track) " - " (:title track))
-              [:em "Nothing is playing."])]]))
 
 (defn pause-button [audio]
   [:button.pure-button.pure-button-active.pure-u-1-3
@@ -55,29 +48,38 @@
     :href url :target "_blank"}
    [:i.fa.fa-external-link]])
 
+(defn now-playing []
+  (let [track (@app-state :now-playing)]
+    [:div
+     [:i.fa.fa-music]
+     [:span (if track
+              (str (:artist track) " - " (:title track))
+              [:em "Nothing is playing."])]]))
+
 (defn player-section []
   (let [audio-ref (r/atom nil)]
     (fn []
       (when-let [url (get-in @app-state [:info :stream_url])]
         [:section#player
-         [:audio {:ref #(reset! audio-ref %)}
+         [:audio.hidden {:ref #(reset! audio-ref %)}
           [:source {:src url}]]
 
          (when-let [audio @audio-ref]
-           [:div#player-controls.pure-button-group
-            {:role "group"}
+           [:div.controller-box
+            [:div.pure-button-group
+             {:role "group"}
 
-            (if (.-paused audio)
-              [play-button audio]
-              [pause-button audio])
+             (if (.-paused audio)
+               [play-button audio]
+               [pause-button audio])
 
-            (if (.-muted audio)
-              [audio-off-button audio]
-              [audio-on-button audio])
+             (if (.-muted audio)
+               [audio-off-button audio]
+               [audio-on-button audio])
 
-            [open-stream-button url]])
+             [open-stream-button url]]
 
-         [now-playing]]))))
+            [now-playing]])]))))
 
 ;; -------------------------
 ;; Upload
@@ -88,33 +90,43 @@
       [:progress.pure-input-1 {:max 100 :value percentage}])))
 
 (defn upload-section []
-  (let [form-ref       (r/atom nil)
-        file-input-ref (r/atom nil)]
+  (let [form-ref         (r/atom nil)
+        file-input-ref   (r/atom nil)
+        upload-input-ref (r/atom nil)]
     (fn []
       [:section#upload
        [:h2 "Upload"]
 
-       [:form.pure-form
+       [:form.hidden
         {:ref #(reset! form-ref %)}
-        [:input.pure-input {:type "file" :name "track"
-                            :ref #(reset! file-input-ref %)
-                            ;:style {:display "none"}
-                            }]
-         (comment
-           [:div.pure-button
-            {:on-click #(when @file-input-ref
-                          (.click @file-input-ref))}
-            [:i.fa.fa-folder-open]]
-           )
+        [:input {:type "file" :name "track"
+                 :ref #(reset! file-input-ref %)}]
+        [:input {:type "button"
+                 :ref #(reset! upload-input-ref %)
+                 :on-click #(when-let [form @form-ref]
+                              (req/upload! form))}]]
 
-         [:input.pure-button.pure-input
-          {:type "button" :value "Upload"
-           :on-click #(when-let [form @form-ref] (req/upload! form))}]
+       [:div.controller-box
+        [:div.pure-button-group
+         [:div.pure-button.pure-u-1-2
+          {:title "Select a file"
+           :on-click #(when @file-input-ref
+                        (.click @file-input-ref))}
+          [:i.fa.fa-folder-open]]
 
-        (comment
-          [:span (when @file-input-ref
-                   (.-value @file-input-ref))])
-        ]
+         [:div.pure-button.pure-button.pure-u-1-2
+          {:title "Upload"
+           :on-click #(when @file-input-ref
+                        (.click @upload-input-ref))}
+          [:i.fa.fa-upload]]]
+
+        [:div
+         ;[:i.fa.fa-file-audio-o]
+         [:span (when @file-input-ref
+                 (let [path (.-value @file-input-ref)]
+                   (if-not (blank? path)
+                     (-> path (split "\\") last)  ; C:\fakepath\file-name
+                     "No file selected.")))]]]
 
        [progress-bar]
 

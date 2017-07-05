@@ -34,6 +34,11 @@ header {
 }
 
 
+.hidden {
+    display: none;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  TABLES                                                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -98,23 +103,23 @@ td:first-child {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- *  PLAYER SECTION                                                           *
+ *  BOX WITH BUTTONS AND TEXT                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-section#player > audio {
-    display: none;
-}
-
-
-section#player {
+.controller-box {
     border: solid 1px rgb(203, 203, 203);
+    overflow: hidden;
 }
 
-#player-controls {
+.controller-box > div {
     display: inline-block;
 }
 
-#player-track {
+.controller-box > div:first-child {
+    width: 25%;
+}
+
+.controller-box > div:last-child {
     display: inline-block;
     vertical-align: middle;
     padding: 0.5rem 0rem 0rem 1rem;
@@ -122,53 +127,24 @@ section#player {
     margin: 0rem;
 }
 
+.controller-box > div:last-child span {
+    white-space: nowrap;
+}
+
 @media screen and (max-width: 48rem) {
-    #player-controls {
+    .controller-box > div:first-child,
+    .controller-box > div:last-child {
         width: 100%;
     }
 
-    #player-track {
+    .controller-box > div:last-child {
         height: 1.75rem;
     }
 }
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  UPLOAD SECTION                                                           *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-section#upload input {
-    display: inline-block;
-}
-
-section#upload input {
-    width: 50%;
-    vertical-align: middle;
-}
-
-section#upload form {
-    border: solid 1px rgb(203, 203, 203);
-    border-radius: 0px;
-    padding: 0rem;
-}
-
-section#upload input:last-child {
-    width: 50%;
-}
-
-@media screen and (max-width: 48rem) {
-    section#upload form {
-        padding: 0rem;
-    }
-
-    section#upload input:first-child {
-        width: 100%;
-    }
-
-    section#upload input:last-child {
-        width: 100%;
-    }
-}
 
 section#upload progress {
     display: block;
