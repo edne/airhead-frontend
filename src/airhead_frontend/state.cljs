@@ -12,9 +12,8 @@
                         :sort-field :title
                         :ascending true
 
-                        ;; TODO :upload branch
                         :upload-percentage 0
-                        :upload-status nil}))
+                        :upload-response nil}))
 
 (defn update-state! [k v]
   (swap! app-state assoc k v))

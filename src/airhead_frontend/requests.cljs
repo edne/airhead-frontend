@@ -7,8 +7,6 @@
             [goog.string :as gstring]
             [goog.string.format]))
 
-;; TODO: handle error responses
-
 (defn get-info! []
   (go (let [response (<! (http/get "/api/info"))]
         (update-state! :info (:body response)))))
@@ -47,8 +45,7 @@
                (recur)))
     (go (let [response (<! http-chan)]
           ;; TODO: check response, and take transcoding status from a websocket
-          (update-state! :upload-status
-                         "Done! It will show in the library once it gets transcoded.")))))
+          (update-state! :upload-response response)))))
 
 (defn get-updates! []
   (get-info!)

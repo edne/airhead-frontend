@@ -26,26 +26,34 @@
               [:em "Nothing is playing."])]]))
 
 (defn pause-button [audio]
-  [:button.pure-button.pure-button-active
-   {:on-click #(.pause audio)}
-   [:i.fa.fa-pause]
-   [:span "Pause"]])
+  [:button.pure-button.pure-button-active.pure-u-1-3
+   {:title "Pause"
+    :on-click #(.pause audio)}
+   [:i.fa.fa-pause]])
 
 (defn play-button [audio]
-  [:button.pure-button
-   {:on-click #(.play audio)}
-   [:i.fa.fa-play]
-   [:span "Play"]])
+  [:button.pure-button.pure-u-1-3
+   {:title "Play"
+    :on-click #(.play audio)}
+   [:i.fa.fa-play]])
 
 (defn audio-on-button [audio]
-  [:button.pure-button
-   {:on-click #(set! (.-muted audio) true)}
+  [:button.pure-button.pure-u-1-3
+   {:title "Mute"
+    :on-click #(set! (.-muted audio) true)}
    [:i.fa.fa-volume-up]])
 
 (defn audio-off-button [audio]
-  [:button.pure-button.pure-button-active
-   {:on-click #(set! (.-muted audio) false)}
+  [:button.pure-button.pure-button-active.pure-u-1-3
+   {:title "Unmute"
+    :on-click #(set! (.-muted audio) false)}
    [:i.fa.fa-volume-off]])
+
+(defn open-stream-button [url]
+  [:a.pure-button.pure-u-1-3
+   {:title "Open stream"
+    :href url :target "_blank"}
+   [:i.fa.fa-external-link]])
 
 (defn player-section []
   (let [audio-ref (r/atom nil)]
@@ -67,9 +75,7 @@
               [audio-off-button audio]
               [audio-on-button audio])
 
-            [:a.pure-button {:href url :target "_blank"}
-             [:i.fa.fa-external-link]
-             [:span "Open stream"]]])
+            [open-stream-button url]])
 
          [now-playing]]))))
 
@@ -82,21 +88,44 @@
       [:progress.pure-input-1 {:max 100 :value percentage}])))
 
 (defn upload-section []
-  (let [form-ref (r/atom nil)]
+  (let [form-ref       (r/atom nil)
+        file-input-ref (r/atom nil)]
     (fn []
       [:section#upload
        [:h2 "Upload"]
 
        [:form.pure-form
         {:ref #(reset! form-ref %)}
-        [:input.pure-input-2-3 {:type "file" :name "track"}]
-        [:input.pure-button.pure-input-1-3
-         {:type "button" :value "Upload"
-          :on-click #(when-let [form @form-ref] (req/upload! form))}]
-        [progress-bar]]
+        [:input.pure-input {:type "file" :name "track"
+                            :ref #(reset! file-input-ref %)
+                            ;:style {:display "none"}
+                            }]
+         (comment
+           [:div.pure-button
+            {:on-click #(when @file-input-ref
+                          (.click @file-input-ref))}
+            [:i.fa.fa-folder-open]]
+           )
 
-       (when-let [status (@app-state :upload-status)]
-         [:p status])])))
+         [:input.pure-button.pure-input
+          {:type "button" :value "Upload"
+           :on-click #(when-let [form @form-ref] (req/upload! form))}]
+
+        (comment
+          [:span (when @file-input-ref
+                   (.-value @file-input-ref))])
+        ]
+
+       [progress-bar]
+
+       (when-let [response (@app-state :upload-response)]
+         (let [{status :status
+                {error-msg :msg
+                 track     :track} :body} response]
+           [:p (if (= status 200)
+                 ; TODO: show when the track appears in the library
+                 "Done! It will show in the library once it gets transcoded."
+                 error-msg)]))])))
 
 ;; -------------------------
 ;; Tracks
