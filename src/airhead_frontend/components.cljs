@@ -152,12 +152,17 @@
    {:on-click #(req/playlist-remove! (:uuid track))}
    [:i.fa.fa-minus]])
 
+(defn track-field [text]
+  [:td {:title text} text])
+
 (defn track-tr [track action-button]
   [:tr.track
    [:td
     (when action-button
       [action-button track])]
-   [:td (track :title)] [:td (track :artist)] [:td (track :album)]])
+   [track-field (track :title)]
+   [track-field (track :artist)]
+   [track-field (track :album)]])
 
 
 ;; -------------------------

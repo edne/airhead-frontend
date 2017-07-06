@@ -48,12 +48,8 @@ table {
     table-layout: fixed;
 }
 
-td {
-    word-break: break-word;
-}
-
 td:first-child, th:first-child {
-    width: 2rem;
+    width: 2.5rem;
     padding: 0rem;
     margin: 0rem;
 }
@@ -70,6 +66,18 @@ th.sorting-th > span.sorting-th-arrow {
     padding-left: 0.3rem;
     font-size: 0.8rem;
 }
+
+tr.track td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-action {
+    padding: 0.5rem 0.5rem;
+    width: 100%;
+}
+
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -91,15 +99,6 @@ th.sorting-th > span.sorting-th-arrow {
 .pure-button > span,
 i.fa + span  {
     margin-left: 0.5rem;
-}
-
-.track-action {
-    padding: 0.3rem 0.6rem;
-    font-weight: bold;
-}
-
-td:first-child {
-    padding: 0.2rem;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
