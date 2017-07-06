@@ -119,7 +119,7 @@
           [:i.fa.fa-upload]]]
 
         [:div
-         ;[:i.fa.fa-file-audio-o]
+         [:i.fa.fa-file-o]
          [:span (when @file-input-ref
                  (let [path (.-value @file-input-ref)]
                    (if-not (blank? path)
