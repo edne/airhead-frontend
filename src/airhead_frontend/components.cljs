@@ -1,5 +1,5 @@
 (ns airhead-frontend.components
-  (:require [clojure.string :refer [blank? split]]
+  (:require [clojure.string :refer [blank? split lower-case]]
             [reagent.core :as r]
             [airhead-frontend.state :refer [app-state update-state!]]
             [airhead-frontend.requests :as req]))
@@ -144,12 +144,14 @@
 
 (defn playlist-add-button [track]
   [:button.pure-button.track-action
-   {:on-click #(req/playlist-add! (:uuid track))}
+   {:title "Add to playlist"
+    :on-click #(req/playlist-add! (:uuid track))}
    [:i.fa.fa-plus]])
 
 (defn playlist-remove-button [track]
   [:button.pure-button.track-action
-   {:on-click #(req/playlist-remove! (:uuid track))}
+   {:title "Remove from playlist"
+    :on-click #(req/playlist-remove! (:uuid track))}
    [:i.fa.fa-minus]])
 
 (defn track-field [text]
@@ -209,7 +211,8 @@
       (rseq sorted-tracks))))
 
 (defn sorting-th [field caption]
-  [:th.sorting-th {:on-click #(update-sort-field! field)}
+  [:th.sorting-th {:title (str "Sort by " (lower-case caption))
+                   :on-click #(update-sort-field! field)}
    [:span caption]
    [:span.sorting-th-arrow (when (= field (@app-state :sort-field))
                           (if (@app-state :ascending)
