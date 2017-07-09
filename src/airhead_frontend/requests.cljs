@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs-http.client :as http]
             [chord.client :refer [ws-ch]]
-            [cljs.core.async :refer [<! chan]]
+            [cljs.core.async :refer [<! chan pipeline]]
             [airhead-frontend.state :refer [app-state update-state!]]
             [goog.string :as gstring]
             [goog.string.format]))
@@ -29,18 +29,19 @@
         (update-state! :library (get-in response [:body :tracks])))))
 
 (defn upload! [form state]
-  (let [progress-chan (chan)
+  (let [uploading?    #(= (% :direction) :upload)
+        to-percentage #(-> (% :loaded)
+                           (/ (% :total)) (* 100))
+        transducer (comp (filter uploading?) (map to-percentage))
+
+        progress-chan (chan 1 transducer)
         http-chan (http/post "/api/library" {:body (js/FormData. form)
                                              :progress progress-chan})]
+
     (go-loop []
-             (when-let [data (<! progress-chan)]
-               (when (= (data :direction) :upload)
-                 (let [loaded     (data :loaded)
-                       total      (data :total)
-                       percentage (-> loaded (/ total) (* 100))
-                       status     (gstring/format "Uploading: %.0f%"
-                                                  percentage)]
-                   (swap! state assoc :percentage percentage)))
+             (when-let [percentage (<! progress-chan)]
+               ;(println percentage)
+               (swap! state assoc :percentage percentage)
                (recur)))
     (go (let [response (<! http-chan)]
           ;; TODO: check response, and take transcoding status from a websocket
