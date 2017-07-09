@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs-http.client :as http]
             [chord.client :refer [ws-ch]]
-            [cljs.core.async :refer [<! chan pipeline]]
+            [cljs.core.async :refer [<! chan pipeline pipe]]
             [airhead-frontend.state :refer [app-state update-state!]]
             [goog.string :as gstring]
             [goog.string.format]))
@@ -28,24 +28,35 @@
                                    {:query-params {"q" (@app-state :query)}}))]
         (update-state! :library (get-in response [:body :tracks])))))
 
+(defn add-transducer
+  [in xf]
+  (let [out (chan)]
+    (pipeline 1 out xf in)
+    out))
+
 (defn upload! [form state]
   (let [uploading?    #(= (% :direction) :upload)
         to-percentage #(-> (% :loaded)
                            (/ (% :total)) (* 100))
-        transducer (comp (filter uploading?) (map to-percentage))
+        transducer (comp (filter uploading?)
+                         (map to-percentage)
+                         (map (fn [%] {:percentage %})))
 
         progress-chan (chan 1 transducer)
         http-chan (http/post "/api/library" {:body (js/FormData. form)
-                                             :progress progress-chan})]
+                                             :progress progress-chan})
+        http-chan (add-transducer http-chan
+                                  (map (fn [%] {:response %})))
+        out-chan (chan)]
+
+    (pipe progress-chan out-chan)
+    (pipe http-chan out-chan)
 
     (go-loop []
-             (when-let [percentage (<! progress-chan)]
-               ;(println percentage)
-               (swap! state assoc :percentage percentage)
-               (recur)))
-    (go (let [response (<! http-chan)]
-          ;; TODO: check response, and take transcoding status from a websocket
-          (swap! state assoc :response response)))))
+             (when-let [delta (<! out-chan)]
+               ;(println delta)
+               (swap! state merge delta)
+               (recur)))))
 
 (defn get-updates! []
   (get-info!)

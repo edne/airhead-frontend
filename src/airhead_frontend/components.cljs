@@ -90,6 +90,12 @@
 
         state (r/atom {:response nil
                        :percentage 0})]
+    ; TODO:
+    ; - make upload return a chan
+    ; - update the state fom the chan values here
+    ; - commit
+    ; - make state a list of chans, and append to it the retured one
+    ; - loop over that list to diplay statuses
     (fn []
       [:section#upload
        [:h2 "Upload"]
