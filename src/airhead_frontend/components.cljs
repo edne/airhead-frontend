@@ -87,7 +87,6 @@
 (defn upload-section []
   (let [form-ref         (r/atom nil)
         file-input-ref   (r/atom nil)
-        upload-input-ref (r/atom nil)
 
         state (r/atom {:response nil
                        :percentage 0})]
@@ -95,14 +94,10 @@
       [:section#upload
        [:h2 "Upload"]
 
-       [:form.hidden
-        {:ref #(reset! form-ref %)}
+       [:form.hidden {:ref #(reset! form-ref %)}
+
         [:input {:type "file" :name "track"
-                 :ref #(reset! file-input-ref %)}]
-        [:input {:type "button"
-                 :ref #(reset! upload-input-ref %)
-                 :on-click #(when-let [form @form-ref]
-                              (req/upload! form state))}]]
+                 :ref #(reset! file-input-ref %)}]]
 
        [:div.controller-box
         [:div.pure-button-group
@@ -115,7 +110,8 @@
          [:div.pure-button.pure-button.pure-u-1-2
           {:title "Upload"
            :on-click #(when @file-input-ref
-                        (.click @upload-input-ref))}
+                        (when-let [form @form-ref]
+                          (req/upload! form state)))}
           [:i.fa.fa-upload]]]
 
         [:div
