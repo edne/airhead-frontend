@@ -118,7 +118,6 @@
                           (let [up-chan (req/upload! form)]
                             (go-loop []
                                      (when-let [delta (<! up-chan)]
-                                       (println delta)
                                        (swap! state merge delta)
                                        (recur))))))}
           [:i.fa.fa-upload]]]
@@ -126,23 +125,23 @@
         [:div
          [:i.fa.fa-file-o]
          [:span (when @file-input-ref
-                 (let [path (.-value @file-input-ref)]
-                   (if-not (blank? path)
-                     (-> path (split "\\") last)  ; C:\fakepath\file-name
-                     "No file selected.")))]]]
+                  (let [path (.-value @file-input-ref)]
+                    (if-not (blank? path)
+                      (-> path (split "\\") last)  ; C:\fakepath\file-name
+                      "No file selected.")))]]]
 
-       (let [percentage (@state :percentage)]
-         (if (< 0 percentage 100)
+       (let [percentage (-> (@state :loaded)
+                            (/ (@state :total)) (* 100))]
+         (when (< 0 percentage 100)
            [:progress.pure-input-1 {:max 100 :value percentage}]))
 
-       (when-let [response (@state :response)]
-         (let [{status :status
-                {error-msg :msg
-                 track     :track} :body} response]
-           [:p (if (= status 200)
-                 ; TODO: show when the track appears in the library
-                 "Done! It will show in the library once it gets transcoded."
-                 error-msg)]))])))
+       (let [{status             :status
+              {error-msg :msg
+               track     :track} :body} @state]
+         [:p (if (= status 200)
+               ; TODO: show when the track appears in the library
+               "Done! It will show in the library once it gets transcoded."
+               error-msg)])])))
 
 ;; -------------------------
 ;; Tracks

@@ -28,32 +28,18 @@
                                    {:query-params {"q" (@app-state :query)}}))]
         (update-state! :library (get-in response [:body :tracks])))))
 
-(defn add-transducer
-  [in xf]
-  (let [out (chan)]
-    (pipeline 1 out xf in)
-    out))
-
 (defn upload! [form]
-  (let [uploading?    #(= (% :direction) :upload)
-        to-percentage #(-> (% :loaded)
-                           (/ (% :total)) (* 100))
-        ; TODO: to-key (fn [%] {:percentage %})
-        ;       try to refer map from async
-        transducer (comp (filter uploading?)
-                         (map to-percentage)
-                         (map (fn [%] {:percentage %})))
+  (let [progress-chan (chan 1
+                            (comp (filter #(= (% :direction) :upload))
+                                  (map    #(dissoc % :direction))))
 
-        progress-chan (chan 1 transducer)
-        http-chan (http/post "/api/library" {:body (js/FormData. form)
-                                             :progress progress-chan})
-        http-chan (add-transducer http-chan
-                                  (map (fn [%] {:response %})))
+        response-chan (http/post "/api/library"
+                                 {:body (js/FormData. form)
+                                  :progress progress-chan})
         out-chan (chan)]
 
+    (pipe response-chan out-chan)
     (pipe progress-chan out-chan)
-    (pipe http-chan out-chan)
-
     out-chan))
 
 (defn get-updates! []
