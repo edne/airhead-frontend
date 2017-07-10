@@ -1,4 +1,5 @@
 (ns airhead-frontend.components
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [clojure.string :refer [blank? split lower-case]]
             [reagent.core :as r]
             [airhead-frontend.state :refer [app-state update-state!]]
@@ -91,9 +92,6 @@
         state (r/atom {:response nil
                        :percentage 0})]
     ; TODO:
-    ; - make upload return a chan
-    ; - update the state fom the chan values here
-    ; - commit
     ; - make state a list of chans, and append to it the retured one
     ; - loop over that list to diplay statuses
     (fn []
@@ -117,7 +115,12 @@
           {:title "Upload"
            :on-click #(when @file-input-ref
                         (when-let [form @form-ref]
-                          (req/upload! form state)))}
+                          (let [up-chan (req/upload! form)]
+                            (go-loop []
+                                     (when-let [delta (<! up-chan)]
+                                       (println delta)
+                                       (swap! state merge delta)
+                                       (recur))))))}
           [:i.fa.fa-upload]]]
 
         [:div

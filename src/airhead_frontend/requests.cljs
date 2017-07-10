@@ -34,10 +34,12 @@
     (pipeline 1 out xf in)
     out))
 
-(defn upload! [form state]
+(defn upload! [form]
   (let [uploading?    #(= (% :direction) :upload)
         to-percentage #(-> (% :loaded)
                            (/ (% :total)) (* 100))
+        ; TODO: to-key (fn [%] {:percentage %})
+        ;       try to refer map from async
         transducer (comp (filter uploading?)
                          (map to-percentage)
                          (map (fn [%] {:percentage %})))
@@ -52,11 +54,7 @@
     (pipe progress-chan out-chan)
     (pipe http-chan out-chan)
 
-    (go-loop []
-             (when-let [delta (<! out-chan)]
-               ;(println delta)
-               (swap! state merge delta)
-               (recur)))))
+    out-chan))
 
 (defn get-updates! []
   (get-info!)
