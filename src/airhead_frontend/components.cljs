@@ -85,12 +85,29 @@
 ;; -------------------------
 ;; Upload
 
-(defn upload-section []
-  (let [form-ref         (r/atom nil)
-        file-input-ref   (r/atom nil)
+(defn track-upload [upload-state]
+  (let [{loaded      :loaded
+         total       :total
+         status      :status
+         status-body :body} @upload-state
 
-        state (r/atom {:response nil
-                       :percentage 0})]
+        {error-msg  :msg
+         track     :track} status-body
+
+        percentage (-> loaded
+                       (/ total) (* 100))]
+    (if (< 0 percentage 100)
+      [:progress.pure-input-1 {:max 100 :value percentage}]
+
+      [:p (if (= status 200)
+            ; TODO: show when the track appears in the library
+            "Done! It will show in the library once it gets transcoded."
+            error-msg)])))
+
+(defn upload-section []
+  (let [form-ref       (r/atom nil)
+        file-input-ref (r/atom nil)
+        upload-state   (r/atom {})]
     ; TODO:
     ; - make state a list of chans, and append to it the retured one
     ; - loop over that list to diplay statuses
@@ -118,7 +135,7 @@
                           (let [up-chan (req/upload! form)]
                             (go-loop []
                                      (when-let [delta (<! up-chan)]
-                                       (swap! state merge delta)
+                                       (swap! upload-state merge delta)
                                        (recur))))))}
           [:i.fa.fa-upload]]]
 
@@ -130,18 +147,7 @@
                       (-> path (split "\\") last)  ; C:\fakepath\file-name
                       "No file selected.")))]]]
 
-       (let [percentage (-> (@state :loaded)
-                            (/ (@state :total)) (* 100))]
-         (when (< 0 percentage 100)
-           [:progress.pure-input-1 {:max 100 :value percentage}]))
-
-       (let [{status             :status
-              {error-msg :msg
-               track     :track} :body} @state]
-         [:p (if (= status 200)
-               ; TODO: show when the track appears in the library
-               "Done! It will show in the library once it gets transcoded."
-               error-msg)])])))
+       [track-upload upload-state]])))
 
 ;; -------------------------
 ;; Tracks
