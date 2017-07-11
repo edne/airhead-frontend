@@ -85,17 +85,17 @@
 ;; -------------------------
 ;; Upload
 
-(defn track-upload [upload-state]
-  (let [{loaded      :loaded
-         total       :total
-         status      :status
-         status-body :body} @upload-state
+(defn track-upload [{loaded      :loaded
+                     total       :total
+                     status      :status
+                     status-body :body}]
 
-        {error-msg  :msg
+  (let [{error-msg :msg
          track     :track} status-body
 
         percentage (-> loaded
                        (/ total) (* 100))]
+
     (if (< 0 percentage 100)
       [:progress.pure-input-1 {:max 100 :value percentage}]
 
@@ -106,11 +106,7 @@
 
 (defn upload-section []
   (let [form-ref       (r/atom nil)
-        file-input-ref (r/atom nil)
-        upload-state   (r/atom {})]
-    ; TODO:
-    ; - make state a list of chans, and append to it the retured one
-    ; - loop over that list to diplay statuses
+        file-input-ref (r/atom nil)]
     (fn []
       [:section#upload
        [:h2 "Upload"]
@@ -132,10 +128,12 @@
           {:title "Upload"
            :on-click #(when @file-input-ref
                         (when-let [form @form-ref]
-                          (let [up-chan (req/upload! form)]
+                          (let [up-chan      (req/upload! form)
+                                upload-state (r/cursor app-state [:uploads])]
                             (go-loop []
                                      (when-let [delta (<! up-chan)]
-                                       (swap! upload-state merge delta)
+                                       (swap! upload-state merge
+                                              {(hash up-chan) delta})
                                        (recur))))))}
           [:i.fa.fa-upload]]]
 
@@ -147,7 +145,8 @@
                       (-> path (split "\\") last)  ; C:\fakepath\file-name
                       "No file selected.")))]]]
 
-       [track-upload upload-state]])))
+       (for [[k upload] (@app-state :uploads)]
+        ^{:key k} [track-upload upload])])))
 
 ;; -------------------------
 ;; Tracks
