@@ -85,24 +85,21 @@
 ;; -------------------------
 ;; Upload
 
-(defn track-upload [{loaded      :loaded
-                     total       :total
-                     status      :status
-                     status-body :body}]
+(defn track-upload [{loaded :loaded
+                     total  :total
+                     status :status
+                     {error-msg :msg
+                      track-id  :track} :body}]
+  (if (< loaded total)
+    [:progress.pure-input-1 {:max total :value loaded}]
 
-  (let [{error-msg :msg
-         track     :track} status-body
-
-        percentage (-> loaded
-                       (/ total) (* 100))]
-
-    (if (< 0 percentage 100)
-      [:progress.pure-input-1 {:max 100 :value percentage}]
-
-      [:p (if (= status 200)
-            ; TODO: show when the track appears in the library
-            "Done! It will show in the library once it gets transcoded."
-            error-msg)])))
+    ; TODO: show track title
+    [:p (if (= status 200)
+          (if (some #(= track-id %)
+                    (->> @app-state :library (map :uuid)))
+            "Done!"  ; TODO anchor to the library
+            "Transcoding...")
+          error-msg)]))
 
 (defn upload-section []
   (let [form-ref       (r/atom nil)
