@@ -94,12 +94,13 @@
     [:progress.pure-input-1 {:max total :value loaded}]
 
     ; TODO: show track title
-    [:p (if (= status 200)
-          (if (some #(= track-id %)
-                    (->> @app-state :library (map :uuid)))
-            "Done!"  ; TODO anchor to the library
-            "Transcoding...")
-          error-msg)]))
+    [:div.track-upload
+     (if (= status 200)
+       (if (some #(= track-id %)
+                 (->> @app-state :library (map :uuid)))
+         "Done!"  ; TODO anchor to the library
+         "Transcoding...")
+       error-msg)]))
 
 (defn upload-section []
   (let [form-ref       (r/atom nil)
