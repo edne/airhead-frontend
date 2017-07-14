@@ -120,6 +120,26 @@
 
       error-msg)))
 
+(defn file-select-button [file-input-ref]
+  [:div.pure-button.pure-u-1-2
+   {:title "Select a file"
+    :on-click #(when @file-input-ref
+                 (.click @file-input-ref))}
+   [:i.fa.fa-folder-open]])
+
+(defn upload-button [form-ref]
+  [:div.pure-button.pure-button.pure-u-1-2
+   {:title "Upload"
+    :on-click #(when-let [form @form-ref]
+                 (let [up-chan      (req/upload! form)
+                       upload-state (r/cursor app-state [:uploads])]
+                   (go-loop []
+                            (when-let [delta (<! up-chan)]
+                              (swap! upload-state merge
+                                     {(hash up-chan) delta})
+                              (recur)))))}
+   [:i.fa.fa-upload]])
+
 (defn upload-section []
   (let [form-ref       (r/atom nil)
         file-input-ref (r/atom nil)]
@@ -134,24 +154,8 @@
 
        [:div.controller-box
         [:div.pure-button-group
-         [:div.pure-button.pure-u-1-2
-          {:title "Select a file"
-           :on-click #(when @file-input-ref
-                        (.click @file-input-ref))}
-          [:i.fa.fa-folder-open]]
-
-         [:div.pure-button.pure-button.pure-u-1-2
-          {:title "Upload"
-           :on-click #(when @file-input-ref
-                        (when-let [form @form-ref]
-                          (let [up-chan      (req/upload! form)
-                                upload-state (r/cursor app-state [:uploads])]
-                            (go-loop []
-                                     (when-let [delta (<! up-chan)]
-                                       (swap! upload-state merge
-                                              {(hash up-chan) delta})
-                                       (recur))))))}
-          [:i.fa.fa-upload]]]
+         [file-select-button file-input-ref]
+         [upload-button form-ref]]
 
         [:div
          [:i.fa.fa-file-o]
