@@ -107,6 +107,9 @@ i.fa + span  {
 
 .controller-box {
     border: solid 1px rgb(203, 203, 203);
+
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .controller-box > div {
@@ -115,6 +118,7 @@ i.fa + span  {
 
 .controller-box > div:first-child {
     width: 25%;
+    border-right: solid 1px rgb(203, 203, 203);
 }
 
 .controller-box > div:last-child {
@@ -123,9 +127,6 @@ i.fa + span  {
     padding: 0.5rem 0rem 0rem 1rem;
     height: 1rem;
     margin: 0rem;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .controller-box > div:last-child span {
@@ -133,9 +134,14 @@ i.fa + span  {
 }
 
 @media screen and (max-width: 48rem) {
+    .controller-box {
+        white-space: normal;
+    }
+
     .controller-box > div:first-child,
     .controller-box > div:last-child {
         width: 100%;
+        white-space: nowrap;
     }
 
     .controller-box > div:last-child {
@@ -153,7 +159,6 @@ i.fa + span  {
 
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
 
     vertical-align: middle;
     margin: 0rem;
