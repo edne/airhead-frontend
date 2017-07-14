@@ -85,22 +85,40 @@
 ;; -------------------------
 ;; Upload
 
-(defn track-upload [{loaded :loaded
+(defn info-uploading [total loaded]
+  [:div.upload-info
+   [:div "Uploading..."]
+   [:progress.pure-input-1 {:max total :value loaded}]])
+
+(defn info-transcoding [total loaded]
+  [:div.upload-info
+   [:div "Transcoding..."]
+   [:progress.pure-input-1]])
+
+(defn info-done [track]
+  [:div.upload-info
+   [:div "Done!"]
+   ; TODO: anchor link to library
+   [:div (str (:artist track) " - " (:title track))]])
+
+(defn upload-info [{loaded :loaded
                      total  :total
                      status :status
                      {error-msg :msg
                       track-id  :track} :body}]
+  ; FIXME: too many if
   (if (< loaded total)
-    [:progress.pure-input-1 {:max total :value loaded}]
+    [info-uploading loaded total]
+    (if (= status 200)
+      (if (some #(= track-id %)
+                (->> @app-state :library (map :uuid)))
 
-    ; TODO: show track title
-    [:div.track-upload
-     (if (= status 200)
-       (if (some #(= track-id %)
-                 (->> @app-state :library (map :uuid)))
-         "Done!"  ; TODO anchor to the library
-         "Transcoding...")
-       error-msg)]))
+        [info-done (->> @app-state :library
+                        (filter #(= (:uuid %) track-id))
+                        first)]
+        [info-transcoding])
+
+      error-msg)))
 
 (defn upload-section []
   (let [form-ref       (r/atom nil)
@@ -144,7 +162,7 @@
                       "No file selected.")))]]]
 
        (for [[k upload] (@app-state :uploads)]
-        ^{:key k} [track-upload upload])])))
+        ^{:key k} [upload-info upload])])))
 
 ;; -------------------------
 ;; Tracks
