@@ -101,24 +101,32 @@
    ; TODO: anchor link to library
    [:div (str (:artist track) " - " (:title track))]])
 
+(defn info-error [status error-msg]
+  [:div.upload-info
+   [:div (str "Error " status)]
+   [:div (str error-msg)]])
+
 (defn upload-info [{loaded :loaded
                      total  :total
                      status :status
                      {error-msg :msg
                       track-id  :track} :body}]
-  ; FIXME: too many if
-  (if (< loaded total)
-    [info-uploading loaded total]
-    (if (= status 200)
-      (if (some #(= track-id %)
-                (->> @app-state :library (map :uuid)))
+  (let [library (@app-state :library)
+        done? (fn [] (some #(= track-id %)
+                           (map :uuid library)))]
+    (cond
+      (< loaded total)
+      [info-uploading loaded total]
 
-        [info-done (->> @app-state :library
+      (= status 200)
+      (if (done?)
+        [info-done (->> library
                         (filter #(= (:uuid %) track-id))
                         first)]
         [info-transcoding])
 
-      error-msg)))
+      :else
+      [info-error status error-msg])))
 
 (defn file-select-button [file-input-ref]
   [:div.pure-button.pure-u-1-2
