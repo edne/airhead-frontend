@@ -8,7 +8,8 @@
                  [org.clojure/clojurescript "1.9.562" :scope "provided"]
                  [reagent "0.6.2"]
                  [cljs-http "0.1.43"]
-                 [jarohen/chord "0.8.1"]]
+                 [jarohen/chord "0.8.1"]
+                 [markdown-clj "0.9.99"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-doo "0.1.6"]

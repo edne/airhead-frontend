@@ -3,7 +3,8 @@
   (:require [clojure.string :refer [blank? split lower-case]]
             [reagent.core :as r]
             [airhead-frontend.state :refer [app-state update-state!]]
-            [airhead-frontend.requests :as req]))
+            [airhead-frontend.requests :as req]
+            [markdown.core :refer [md->html]]))
 
 ;; -------------------------
 ;; Header
@@ -14,7 +15,8 @@
         message (@cursor :greet_message)]
     [:header
      [:h1 title]
-     [:p message]]))
+     [:div {:dangerouslySetInnerHTML
+            {:__html (-> message md->html str)}}]]))
 
 ;; -------------------------
 ;; Player
