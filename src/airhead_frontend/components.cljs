@@ -83,6 +83,33 @@
             [now-playing]])]))))
 
 ;; -------------------------
+;; Tracks
+
+(defn playlist-add-button [track]
+  [:button.track-action
+   {:title "Add to playlist"
+    :on-click #(req/playlist-add! (:uuid track))}
+   [:i.fa.fa-plus]])
+
+(defn playlist-remove-button [track]
+  [:button.pure-button.track-action
+   {:title "Remove from playlist"
+    :on-click #(req/playlist-remove! (:uuid track))}
+   [:i.fa.fa-minus]])
+
+(defn track-field [text]
+  [:td {:title text} text])
+
+(defn track-tr [track action-button]
+  [:tr.track
+   [:td
+    (when action-button
+      [action-button track])]
+   [track-field (track :title)]
+   [track-field (track :artist)]
+   [track-field (track :album)]])
+
+;; -------------------------
 ;; Upload
 
 (defn info-uploading [total loaded]
@@ -98,8 +125,9 @@
 (defn info-done [track]
   [:div.upload-info
    [:div "Done!"]
-   ; TODO: anchor link to library
-   [:div (str (:artist track) " - " (:title track))]])
+   [:div
+    [playlist-add-button track]
+    [:span (str (:artist track) " - " (:title track))]]])
 
 (defn info-error [status error-msg]
   [:div.upload-info
@@ -175,34 +203,6 @@
 
        (for [[k upload] (@app-state :uploads)]
         ^{:key k} [upload-info upload])])))
-
-;; -------------------------
-;; Tracks
-
-(defn playlist-add-button [track]
-  [:button.pure-button.track-action
-   {:title "Add to playlist"
-    :on-click #(req/playlist-add! (:uuid track))}
-   [:i.fa.fa-plus]])
-
-(defn playlist-remove-button [track]
-  [:button.pure-button.track-action
-   {:title "Remove from playlist"
-    :on-click #(req/playlist-remove! (:uuid track))}
-   [:i.fa.fa-minus]])
-
-(defn track-field [text]
-  [:td {:title text} text])
-
-(defn track-tr [track action-button]
-  [:tr.track
-   [:td
-    (when action-button
-      [action-button track])]
-   [track-field (track :title)]
-   [track-field (track :artist)]
-   [track-field (track :album)]])
-
 
 ;; -------------------------
 ;; Tables

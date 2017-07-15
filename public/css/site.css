@@ -4,6 +4,7 @@
 
 html {
     font-family: 'Exo 2', sans-serif;
+    color: #222;
 }
 
 main {
@@ -39,6 +40,11 @@ header {
 }
 
 
+h1, h2, h3 {
+    color: #000;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *  TABLES                                                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -49,8 +55,10 @@ table {
 }
 
 td:first-child, th:first-child {
-    width: 2.5rem;
+    width: 1rem;
     padding: 0rem;
+    padding-left: 1rem;
+    padding-right: 0rem;
     margin: 0rem;
 }
 
@@ -74,8 +82,15 @@ tr.track td {
 }
 
 .track-action {
-    padding: 0.5rem 0.5rem;
-    width: 100%;
+    background-color: #fff;
+    max-width: 2rem;
+    border: none;
+    padding: 0rem;
+    margin: 0rem;
+}
+
+.track-action:hover {
+    background: #fff;
 }
 
 
@@ -177,9 +192,19 @@ i.fa + span  {
     width: 25%;
 }
 
+@media screen and (max-width: 48rem) {
+    .upload-info > div:first-child {
+        display: none;
+    }
+}
+
 .upload-info > div:last-child {
     padding-left: 1rem;
     max-width: 75%;
+}
+
+.upload-info span {
+    padding-left: 0.5rem;
 }
 
 .upload-info progress {
