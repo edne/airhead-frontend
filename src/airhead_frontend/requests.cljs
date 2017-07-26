@@ -28,6 +28,9 @@
                                    {:query-params {"q" (@app-state :query)}}))]
         (update-state! :library (get-in response [:body :tracks])))))
 
+(defn playlist-skip! [id]
+  (http/get "/api/playlist/skip"))
+
 (defn upload! [form]
   (let [progress-chan (chan 1
                             (comp (filter #(= (% :direction) :upload))

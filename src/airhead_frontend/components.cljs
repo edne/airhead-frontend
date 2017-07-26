@@ -22,31 +22,37 @@
 ;; Player
 
 (defn pause-button [audio]
-  [:button.pure-button.pure-button-active.pure-u-1-3
+  [:button.pure-button.pure-button-active.pure-u-1-4
    {:title "Pause"
     :on-click #(.pause audio)}
    [:i.fa.fa-pause]])
 
 (defn play-button [audio]
-  [:button.pure-button.pure-u-1-3
+  [:button.pure-button.pure-u-1-4
    {:title "Play"
     :on-click #(.play audio)}
    [:i.fa.fa-play]])
 
+(defn skip-button []
+  [:button.pure-button.pure-u-1-4
+   {:title "Skip track"
+    :on-click req/playlist-skip!}
+   [:i.fa.fa-step-forward]])
+
 (defn audio-on-button [audio]
-  [:button.pure-button.pure-u-1-3
+  [:button.pure-button.pure-u-1-4
    {:title "Mute"
     :on-click #(set! (.-muted audio) true)}
    [:i.fa.fa-volume-up]])
 
 (defn audio-off-button [audio]
-  [:button.pure-button.pure-button-active.pure-u-1-3
+  [:button.pure-button.pure-button-active.pure-u-1-4
    {:title "Unmute"
     :on-click #(set! (.-muted audio) false)}
    [:i.fa.fa-volume-off]])
 
 (defn open-stream-button [url]
-  [:a.pure-button.pure-u-1-3
+  [:a.pure-button.pure-u-1-4
    {:title "Open stream"
     :href url :target "_blank"}
    [:i.fa.fa-external-link]])
@@ -75,6 +81,8 @@
              (if (.-paused audio)
                [play-button audio]
                [pause-button audio])
+
+             [skip-button]
 
              (if (.-muted audio)
                [audio-off-button audio]
