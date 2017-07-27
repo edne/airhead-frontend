@@ -122,7 +122,7 @@
 ;; -------------------------
 ;; Upload
 
-(defn info-uploading [file-name total loaded]
+(defn info-uploading [file-name loaded total]
   [:div.upload-info
    [:div [:progress.pure-input-1 {:max total :value loaded}]]
    [:div (str "Uploading: " file-name)]])
