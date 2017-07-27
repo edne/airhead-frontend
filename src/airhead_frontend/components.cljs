@@ -43,13 +43,15 @@
   [:a.pure-button.pure-u-1-4 {:title "Open stream" :href url :target "_blank"}
    [:i.fa.fa-external-link]])
 
+(defn right-box [head body]
+  [:div.right-box head [:span body]])
+
 (defn now-playing []
   (let [track (@app-state :now-playing)]
-    [:div
-     [:i.fa.fa-music]
-     [:span (if track
-              (str (:artist track) " - " (:title track))
-              [:em "Nothing is playing."])]]))
+    [right-box [:i.fa.fa-music]
+     (if track
+       (str (:artist track) " - " (:title track))
+       [:em "Nothing is playing."])]))
 
 (defn player-section []
   (let [audio-ref (r/atom nil)]
@@ -121,14 +123,14 @@
 (defn info-done [track]
   [:div.upload-info
    [:div "Done!"]
-   [:div
+   [right-box
     [playlist-add-button track]
-    [:span (str (:artist track) " - " (:title track))]]])
+    (str (:artist track) " - " (:title track))]])
 
 (defn info-error [status error-msg]
   [:div.upload-info
    [:div (str "Error " status)]
-   [:div (str error-msg)]])
+   [right-box [:div (str error-msg)]]])
 
 (defn upload-info [{loaded :loaded
                     total  :total
@@ -201,11 +203,10 @@
          [file-select-button file-input-ref]
          [upload-button form-ref file-input-ref]]
 
-        [:div
-         [:i.fa.fa-file-o]
-         [:span (when @file-input-ref
-                  (or (get-file-name file-input-ref)
-                      "No file selected."))]]]
+        [right-box [:i.fa.fa-file-o]
+         (when @file-input-ref
+           (or (get-file-name file-input-ref)
+               "No file selected."))]]
 
        (for [[k upload] (@app-state :uploads)]
         ^{:key k} [upload-info upload])])))
