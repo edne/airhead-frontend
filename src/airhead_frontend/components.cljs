@@ -122,15 +122,15 @@
 ;; -------------------------
 ;; Upload
 
-(defn info-uploading [total loaded]
+(defn info-uploading [file-name total loaded]
   [:div.upload-info
-   [:div "Uploading..."]
-   [:progress.pure-input-1 {:max total :value loaded}]])
+   [:div [:progress.pure-input-1 {:max total :value loaded}]]
+   [:div (str "Uploading: " file-name)]])
 
-(defn info-transcoding [total loaded]
+(defn info-transcoding [file-name]
   [:div.upload-info
-   [:div "Transcoding..."]
-   [:progress.pure-input-1]])
+   [:div [:progress.pure-input-1]]
+   [:div (str "Transcoding: " file-name)]])
 
 (defn info-done [track]
   [:div.upload-info
@@ -145,23 +145,24 @@
    [:div (str error-msg)]])
 
 (defn upload-info [{loaded :loaded
-                     total  :total
-                     status :status
-                     {error-msg :msg
-                      track-id  :track} :body}]
+                    total  :total
+                    status :status
+                    file-name :file-name
+                    {error-msg :msg
+                     track-id  :track} :body}]
   (let [library (@app-state :library)
         done? (fn [] (some #(= track-id %)
                            (map :uuid library)))]
     (cond
       (< loaded total)
-      [info-uploading loaded total]
+      [info-uploading file-name loaded total]
 
       (= status 200)
       (if (done?)
         [info-done (->> library
                         (filter #(= (:uuid %) track-id))
                         first)]
-        [info-transcoding])
+        [info-transcoding file-name])
 
       :else
       [info-error status error-msg])))
@@ -173,17 +174,28 @@
                  (.click @file-input-ref))}
    [:i.fa.fa-folder-open]])
 
-(defn upload-button [form-ref]
+(defn get-file-name [file-input-ref]
+  (let [path (.-value @file-input-ref)]
+    (if-not (blank? path)
+      (-> path (split "\\") last)  ; C:\fakepath\file-name
+      nil)))
+
+(defn upload-button [form-ref file-input-ref]
   [:div.pure-button.pure-button.pure-u-1-2
    {:title "Upload"
-    :on-click #(when-let [form @form-ref]
-                 (let [up-chan      (req/upload! form)
-                       upload-state (r/cursor app-state [:uploads])]
-                   (go-loop []
-                            (when-let [delta (<! up-chan)]
-                              (swap! upload-state merge
-                                     {(hash up-chan) delta})
-                              (recur)))))}
+    :on-click #(when-let   [form      @form-ref]
+                 (when-let [file-name (get-file-name file-input-ref)]
+
+                   (let [up-chan      (req/upload! form)
+                         upload-state (r/cursor app-state [:uploads])]
+
+                     (set! (.-value @file-input-ref) "")
+                     (go-loop []
+                              (when-let [delta (<! up-chan)]
+                                (swap! upload-state merge
+                                       {(hash up-chan)
+                                        (merge delta {:file-name file-name})})
+                                (recur))))))}
    [:i.fa.fa-upload]])
 
 (defn upload-section []
@@ -201,15 +213,13 @@
        [:div.controller-box
         [:div.pure-button-group
          [file-select-button file-input-ref]
-         [upload-button form-ref]]
+         [upload-button form-ref file-input-ref]]
 
         [:div
          [:i.fa.fa-file-o]
          [:span (when @file-input-ref
-                  (let [path (.-value @file-input-ref)]
-                    (if-not (blank? path)
-                      (-> path (split "\\") last)  ; C:\fakepath\file-name
-                      "No file selected.")))]]]
+                  (or (get-file-name file-input-ref)
+                      "No file selected."))]]]
 
        (for [[k upload] (@app-state :uploads)]
         ^{:key k} [upload-info upload])])))

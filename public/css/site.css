@@ -209,8 +209,7 @@ i.fa + span  {
 
 .upload-info progress {
     display: inline;
-    margin-left: 2.5%;
-    width: 70%;
+    width: 90%;
     padding: 0rem;
 }
 
