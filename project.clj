@@ -12,6 +12,7 @@
                  [markdown-clj "0.9.99"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
+            [cljs-simple-cache-buster "0.1.1"]
             [lein-doo "0.1.6"]
             [lein-figwheel "0.5.10"]]
 
@@ -28,6 +29,10 @@
              :nrepl-port 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
              :css-dirs ["public/css"]}
+
+  :cljs-simple-cache-buster {:cljsbuild-id ["app" "test" "release"]
+                             :template-file "template/index.html"
+                             :output-to "public/index.html"}
 
   :cljsbuild {:builds {:app
                        {:source-paths ["src" "env/dev/cljs"]
