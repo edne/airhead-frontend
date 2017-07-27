@@ -154,9 +154,6 @@
         done? (fn [] (some #(= track-id %)
                            (map :uuid library)))]
     (cond
-      (< loaded total)
-      [info-uploading file-name loaded total]
-
       (= status 200)
       (if (done?)
         [info-done (->> library
@@ -164,8 +161,11 @@
                         first)]
         [info-transcoding file-name])
 
+      (and status (not= status 200))
+      [info-error status error-msg]
+
       :else
-      [info-error status error-msg])))
+      [info-uploading file-name loaded total])))
 
 (defn file-select-button [file-input-ref]
   [:div.pure-button.pure-u-1-2
