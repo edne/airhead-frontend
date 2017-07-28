@@ -29,7 +29,8 @@
         (update-state! :library (get-in response [:body :tracks])))))
 
 (defn playlist-skip! [id]
-  (http/get "/api/playlist/skip"))
+  (http/delete (str "/api/playlist/"
+                    (-> @app-state :now-playing :uuid))))
 
 (defn upload! [form]
   (let [progress-chan (chan 1
